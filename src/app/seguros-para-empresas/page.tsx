@@ -72,11 +72,11 @@ export default function SegurosParaEmpresas() {
               <p className="text-[0.7rem] font-black text-primary-700 tracking-widest uppercase">Seguros para Empresas</p>
             </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-display font-black text-neutral-900 leading-[0.95] tracking-tighter mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] xl:text-[6rem] font-display font-black text-neutral-900 leading-[0.95] tracking-tighter mb-8">
               Proteção estratégica para o seu <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-500">maior patrimônio.</span>
             </h1>
 
-            <p className="text-xl text-neutral-600 font-medium mb-12 leading-relaxed max-w-xl">
+            <p className="text-lg md:text-xl text-neutral-600 font-medium mb-12 leading-relaxed max-w-xl">
               Consultoria personalizada e soluções robustas de saúde e proteção, desenhadas para empresas que buscam excelência e valorização do capital humano.
             </p>
 
@@ -125,7 +125,7 @@ export default function SegurosParaEmpresas() {
       <section className="relative py-32 px-6 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1">
-            <div className="relative w-full max-w-4xl mx-auto transform scale-110 transition-transform duration-700">
+            <div className="relative w-full max-w-4xl mx-auto transform scale-100 transition-transform duration-700">
               <DotLottieReact
                 src="/fullanimation.lottie"
                 autoplay
@@ -195,7 +195,7 @@ export default function SegurosParaEmpresas() {
           </div>
 
           <div className="relative">
-            <div className="w-full max-w-4xl mx-auto opacity-90 transform scale-110 transition-transform duration-700">
+            <div className="w-full max-w-4xl mx-auto opacity-90 transform scale-100 transition-transform duration-700">
               <DotLottieReact
                 src="/workflow.lottie"
                 autoplay
@@ -212,7 +212,7 @@ export default function SegurosParaEmpresas() {
       <section className="relative py-32 px-6 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1">
-            <div className="relative w-full max-w-3xl lg:max-w-4xl mx-auto transform scale-125 transition-transform duration-700">
+            <div className="relative w-full max-w-3xl lg:max-w-4xl mx-auto transform scale-100 transition-transform duration-700">
               <DotLottieReact
                 src="/Dental clinic color.lottie"
                 autoplay

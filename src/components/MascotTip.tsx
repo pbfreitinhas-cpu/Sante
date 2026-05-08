@@ -23,9 +23,9 @@ export function TalkingMascot({ message }: { message?: string }) {
       <style jsx>{`
         .talking-mascot-wrapper {
           position: absolute;
-          right: -480px; /* Adjusted further out for larger size */
-          top: 450px;   /* Slightly higher */
-          width: 450px;
+          right: -30%; /* Position it further out on large screens */
+          top: 200px;
+          width: 380px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -35,37 +35,20 @@ export function TalkingMascot({ message }: { message?: string }) {
 
         .cloud-container {
           width: 100%;
-          margin-bottom: -50px; /* Adjusted for larger size */
+          margin-bottom: -40px;
           margin-right: 0;
         }
 
         .mascot-container {
-          width: 400px;
-          height: 400px;
+          width: 320px;
+          height: 320px;
         }
 
         /* Responsive adjustments */
-        @media (max-width: 1400px) {
+        @media (max-width: 1600px) {
           .talking-mascot-wrapper {
-            right: -420px;
-            width: 380px;
-          }
-          .cloud-container {
-            margin-right: 0;
-          }
-          .mascot-container {
-            width: 340px;
-            height: 340px;
-          }
-        }
-
-        @media (max-width: 1200px) {
-          .talking-mascot-wrapper {
-            right: -350px;
-            width: 300px;
-          }
-          .cloud-container {
-            margin-right: 0;
+            right: -20%;
+            width: 320px;
           }
           .mascot-container {
             width: 280px;
@@ -73,26 +56,51 @@ export function TalkingMascot({ message }: { message?: string }) {
           }
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1440px) {
+          .talking-mascot-wrapper {
+            right: -10%;
+            width: 280px;
+          }
+          .mascot-container {
+            width: 240px;
+            height: 240px;
+          }
+        }
+
+        @media (max-width: 1280px) {
+          .talking-mascot-wrapper {
+            right: -5%;
+            width: 250px;
+          }
+          .mascot-container {
+            width: 200px;
+            height: 200px;
+          }
+        }
+
+        @media (max-width: 1100px) {
           .talking-mascot-wrapper {
             position: relative;
             right: auto;
             top: auto;
             width: 100%;
-            margin: 0 auto 3rem;
+            max-width: 100%;
+            margin: 0 auto 2rem;
             transform: none;
             display: flex;
             flex-direction: column;
             align-items: center;
+            pointer-events: auto;
           }
           .cloud-container {
             margin-right: 0;
-            margin-bottom: -30px;
-            max-width: 450px;
+            margin-bottom: -20px;
+            width: 100%;
+            max-width: 500px;
           }
           .mascot-container {
-            width: 250px;
-            height: 250px;
+            width: 180px;
+            height: 180px;
           }
         }
       `}</style>
@@ -255,7 +263,22 @@ export function MascotCloud({
           width: 100%;
           height: 100%;
           z-index: 0;
-          /* Removed scaleX(-1) so tail points bottom-left towards mascot again */
+        }
+
+        @media (max-width: 1100px) {
+          .mascot-cloud-svg {
+            display: none;
+          }
+          .mascot-cloud-container {
+            padding-bottom: 0;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(204, 243, 47, 0.2);
+            border-radius: 2rem;
+          }
+          .mascot-cloud-content {
+            padding: 1.5rem !important;
+          }
         }
 
         .mascot-cloud-content {

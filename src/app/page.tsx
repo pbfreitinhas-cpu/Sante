@@ -161,7 +161,7 @@ export default function Home() {
         <motion.div 
           onMouseEnter={() => setHoveredSide('pj')}
           onMouseLeave={() => setHoveredSide(null)}
-          className={`relative h-1/2 md:h-full bg-primary cursor-pointer flex flex-col items-center justify-center transition-[flex] duration-700 ease-out p-8 md:p-12
+          className={`relative min-h-[50vh] md:h-full bg-primary cursor-pointer flex flex-col items-center justify-center transition-[flex] duration-700 ease-out p-8 md:p-12
             ${hoveredSide === 'pj' ? 'md:flex-[1.4] flex-[1.2]' : hoveredSide === 'pf' ? 'md:flex-[0.6] flex-[0.8]' : 'flex-1'}`}
         >
           <div className="relative z-10 w-full h-full flex flex-col items-center justify-center max-w-xl">
@@ -171,10 +171,10 @@ export default function Home() {
             </div>
 
             <div className="text-center w-full max-w-md mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-[4rem] font-black text-neutral-950 mb-6 leading-[1.1] tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black text-neutral-950 mb-6 leading-[1.1] tracking-tight">
                 Seguros para<br/>Empresas
               </h1>
-              <div className="h-24 flex flex-col items-center justify-start"> {/* Fixed height to avoid jumps */}
+              <div className="min-h-[6rem] flex flex-col items-center justify-start"> {/* Flexible height */}
                 <AnimatePresence mode="wait">
                   {hoveredSide === 'pj' && (
                     <motion.p 
@@ -200,7 +200,7 @@ export default function Home() {
         <motion.div 
           onMouseEnter={() => setHoveredSide('pf')}
           onMouseLeave={() => setHoveredSide(null)}
-          className={`relative h-1/2 md:h-full bg-white cursor-pointer flex flex-col items-center justify-center transition-[flex] duration-700 ease-out p-8 md:p-12
+          className={`relative min-h-[50vh] md:h-full bg-white cursor-pointer flex flex-col items-center justify-center transition-[flex] duration-700 ease-out p-8 md:p-12
             ${hoveredSide === 'pf' ? 'md:flex-[1.4] flex-[1.2]' : hoveredSide === 'pj' ? 'md:flex-[0.6] flex-[0.8]' : 'flex-1'}`}
         >
           <div className="relative z-10 w-full h-full flex flex-col items-center justify-center max-w-xl">
@@ -210,10 +210,10 @@ export default function Home() {
             </div>
 
             <div className="text-center w-full max-w-md mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-[4rem] font-black text-neutral-950 mb-6 leading-[1.1] tracking-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black text-neutral-950 mb-6 leading-[1.1] tracking-tight">
                 Seguros para<br/>Pessoas
               </h1>
-              <div className="h-24 flex flex-col items-center justify-start"> {/* Fixed height to avoid jumps */}
+              <div className="min-h-[6rem] flex flex-col items-center justify-start"> {/* Flexible height */}
                 <AnimatePresence mode="wait">
                   {hoveredSide === 'pf' && (
                     <motion.p 
@@ -255,7 +255,7 @@ export default function Home() {
             className="relative flex items-center justify-center min-h-[450px] lg:min-h-[750px]"
           >
             {/* Lottie Animation Replacement */}
-            <div className="w-full max-w-5xl lg:max-w-6xl h-full relative z-10 transform scale-110 transition-transform duration-700">
+            <div className="w-full max-w-4xl xl:max-w-5xl h-full relative z-10 transform scale-100 transition-transform duration-700">
               <DotLottieReact
                 src="/Yoga Se Hi hoga.lottie"
                 autoplay
@@ -265,14 +265,14 @@ export default function Home() {
             </div>
 
             {/* Glowing Orbs for extra clinical/tech feel */}
-            <div className="absolute -top-20 -left-20 w-80 h-80 bg-primary/30 rounded-full blur-[120px] -z-10 animate-pulse" />
-            <div className="absolute -bottom-32 -right-20 w-96 h-96 bg-brand-blue/20 rounded-full blur-[150px] -z-10" />
+            <div className="absolute -top-10 -left-10 w-60 h-60 md:w-80 md:h-80 bg-primary/30 rounded-full blur-[100px] -z-10 animate-pulse" />
+            <div className="absolute -bottom-20 -right-10 w-72 h-72 md:w-96 md:h-96 bg-brand-blue/20 rounded-full blur-[120px] -z-10" />
           </motion.div>
           <div className="flex flex-col">
             <div className="bg-primary-100/50 border border-primary-200 px-5 py-2 rounded-full w-max mb-8 mx-auto lg:mx-0">
               <p className="text-[0.65rem] font-bold text-primary-700 tracking-[0.2em] uppercase">SOBRE NÓS</p>
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-[4rem] font-black text-neutral-900 mb-8 leading-[1.1] tracking-tight text-center lg:text-left">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black text-neutral-900 mb-8 leading-[1.1] tracking-tight text-center lg:text-left">
               Sua saúde merece um<br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-brand-blue-400 to-brand-blue-600 animate-pulse-slow">cuidado elevado.</span>
             </h2>
@@ -381,8 +381,8 @@ export default function Home() {
             </motion.div>
 
             {/* Right Side: The Globe (75% visible) */}
-            <div className="relative h-[500px] md:h-[600px] lg:h-[700px] lg:absolute lg:right-[-12%] lg:top-1/2 lg:-translate-y-1/2 lg:w-[50%] flex items-center justify-center pointer-events-none">
-                <div className="w-[120%] lg:w-[150%] aspect-square relative opacity-90 rounded-full">
+            <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] lg:absolute lg:right-[-5%] xl:right-[-10%] lg:top-1/2 lg:-translate-y-1/2 lg:w-[50%] flex items-center justify-center pointer-events-none">
+                <div className="w-[110%] sm:w-[120%] lg:w-[140%] xl:w-[150%] aspect-square relative opacity-90 rounded-full">
                     <div className="absolute inset-0 bg-brand-blue-500/20 blur-[100px] rounded-full -z-10" />
                     <DotLottieReact
                       src="/Globe.lottie"
@@ -456,12 +456,12 @@ export default function Home() {
           <div className="relative w-full flex flex-col lg:flex-row items-center justify-center min-h-[700px] py-12 px-6">
             
             {/* Left: Lottie Background - Taking up more space */}
-            <div className="lg:w-[70%] w-full relative z-0 flex justify-center lg:justify-end">
+            <div className="lg:w-[60%] w-full relative z-0 flex justify-center lg:justify-end">
               <motion.div 
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
-                className="relative w-full max-w-7xl h-full transform scale-125 transition-transform duration-700"
+                className="relative w-full max-w-6xl h-full transform scale-100 transition-transform duration-700"
               >
                 <div className="w-full h-full opacity-100">
                   <DotLottieReact
@@ -475,12 +475,12 @@ export default function Home() {
             </div>
 
             {/* Right: Premium Glassmorphism Form - Positioned to overlap */}
-            <div className="lg:w-[35%] w-full relative z-30 lg:-ml-48 mt-12 lg:mt-0 flex justify-center lg:justify-start">
+            <div className="lg:w-[40%] w-full relative z-30 lg:-ml-24 mt-12 lg:mt-0 flex justify-center lg:justify-start">
               <motion.div 
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
-                className="w-full max-w-lg bg-white/80 backdrop-blur-3xl p-8 md:p-10 rounded-[3.5rem] border border-white/90 shadow-[0_40px_80px_rgba(0,0,0,0.08)]"
+                className="w-full max-w-lg bg-white/80 backdrop-blur-3xl p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] border border-white/90 shadow-[0_40px_80px_rgba(0,0,0,0.08)]"
               >
                 <div className="text-center lg:text-left mb-8">
                   <div className="inline-flex items-center gap-2 bg-primary-100 px-3 py-1 rounded-full mb-6">
