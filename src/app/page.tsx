@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ProtectionDome } from '@/components/ProtectionDome';
 import { Building2, User, Globe, ChevronRight, ChevronDown, ShieldCheck, MapPin, Map, Star, ArrowRight, Phone, CheckCircle, Menu, X, Thermometer, Stethoscope, FlaskConical, Activity, Heart, Plus, Syringe, Globe2, Mail, Quote } from 'lucide-react';
-import { DotLottiePlayer } from '@dotlottie/react-player';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 
@@ -104,11 +104,11 @@ const TestimonialCard = ({ data, index }: { data: any, index: number }) => {
   );
 };
 
-export default function Home() {
-  const [hoveredSide, setHoveredSide] = useState<'pj' | 'pf' | null>(null);
+function SearchHandler({ setSolicitacao, contatoRef }: { 
+  setSolicitacao: (val: string) => void, 
+  contatoRef: React.RefObject<HTMLDivElement | null> 
+}) {
   const searchParams = useSearchParams();
-  const [solicitacao, setSolicitacao] = useState('');
-  const contatoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (searchParams.get('cotacao') === 'true') {
@@ -118,7 +118,15 @@ export default function Home() {
         contatoRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 500);
     }
-  }, [searchParams]);
+  }, [searchParams, setSolicitacao, contatoRef]);
+
+  return null;
+}
+
+export default function Home() {
+  const [hoveredSide, setHoveredSide] = useState<'pj' | 'pf' | null>(null);
+  const [solicitacao, setSolicitacao] = useState('');
+  const contatoRef = useRef<HTMLDivElement>(null);
 
   const partners = [
     { name: 'Amil', src: '/amil.jpg' },
@@ -133,6 +141,9 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen bg-neutral-50 overflow-x-hidden">
+      <Suspense fallback={null}>
+        <SearchHandler setSolicitacao={setSolicitacao} contatoRef={contatoRef} />
+      </Suspense>
       
       {/* Background Decor (Radiant Playful Gradients) */}
       <div className="pointer-events-none absolute top-0 left-0 w-full h-[1000px] overflow-hidden -z-10 bg-gradient-to-b from-primary-50 to-neutral-50">
@@ -153,7 +164,7 @@ export default function Home() {
           className={`relative h-1/2 md:h-full bg-primary cursor-pointer flex flex-col items-center justify-center transition-[flex] duration-700 ease-out p-8 md:p-12
             ${hoveredSide === 'pj' ? 'md:flex-[1.4] flex-[1.2]' : hoveredSide === 'pf' ? 'md:flex-[0.6] flex-[0.8]' : 'flex-1'}`}
         >
-          <div className="relative z-10 w-full h-full flex flex-col items-center justify-center max-w-lg">
+          <div className="relative z-10 w-full h-full flex flex-col items-center justify-center max-w-xl">
             <div className={`relative w-full aspect-[4/3] mb-8 transition-transform duration-700 ease-out 
               ${hoveredSide === 'pj' ? '-translate-y-6 scale-105' : 'translate-y-0 scale-100'}`}>
               <ProtectionDome src="/empresas.png" alt="Empresas" />
@@ -192,7 +203,7 @@ export default function Home() {
           className={`relative h-1/2 md:h-full bg-white cursor-pointer flex flex-col items-center justify-center transition-[flex] duration-700 ease-out p-8 md:p-12
             ${hoveredSide === 'pf' ? 'md:flex-[1.4] flex-[1.2]' : hoveredSide === 'pj' ? 'md:flex-[0.6] flex-[0.8]' : 'flex-1'}`}
         >
-          <div className="relative z-10 w-full h-full flex flex-col items-center justify-center max-w-lg">
+          <div className="relative z-10 w-full h-full flex flex-col items-center justify-center max-w-xl">
             <div className={`relative w-full aspect-[4/3] mb-8 transition-transform duration-700 ease-out 
               ${hoveredSide === 'pf' ? '-translate-y-6 scale-105' : 'translate-y-0 scale-100'}`}>
               <ProtectionDome src="/referencia_total.png" alt="Pessoas" />
@@ -241,11 +252,11 @@ export default function Home() {
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="relative flex items-center justify-center min-h-[400px] lg:min-h-[600px]"
+            className="relative flex items-center justify-center min-h-[450px] lg:min-h-[750px]"
           >
             {/* Lottie Animation Replacement */}
-            <div className="w-full max-w-2xl h-full relative z-10">
-              <DotLottiePlayer
+            <div className="w-full max-w-5xl lg:max-w-6xl h-full relative z-10 transform scale-110 transition-transform duration-700">
+              <DotLottieReact
                 src="/Yoga Se Hi hoga.lottie"
                 autoplay
                 loop
@@ -254,8 +265,8 @@ export default function Home() {
             </div>
 
             {/* Glowing Orbs for extra clinical/tech feel */}
-            <div className="absolute -top-10 -left-10 w-64 h-64 bg-primary/30 rounded-full blur-[100px] -z-10 animate-pulse" />
-            <div className="absolute -bottom-20 -right-10 w-80 h-80 bg-brand-blue/20 rounded-full blur-[120px] -z-10" />
+            <div className="absolute -top-20 -left-20 w-80 h-80 bg-primary/30 rounded-full blur-[120px] -z-10 animate-pulse" />
+            <div className="absolute -bottom-32 -right-20 w-96 h-96 bg-brand-blue/20 rounded-full blur-[150px] -z-10" />
           </motion.div>
           <div className="flex flex-col">
             <div className="bg-primary-100/50 border border-primary-200 px-5 py-2 rounded-full w-max mb-8 mx-auto lg:mx-0">
@@ -373,7 +384,7 @@ export default function Home() {
             <div className="relative h-[500px] md:h-[600px] lg:h-[700px] lg:absolute lg:right-[-12%] lg:top-1/2 lg:-translate-y-1/2 lg:w-[50%] flex items-center justify-center pointer-events-none">
                 <div className="w-[120%] lg:w-[150%] aspect-square relative opacity-90 rounded-full">
                     <div className="absolute inset-0 bg-brand-blue-500/20 blur-[100px] rounded-full -z-10" />
-                    <DotLottiePlayer
+                    <DotLottieReact
                       src="/Globe.lottie"
                       autoplay
                       loop
@@ -406,7 +417,7 @@ export default function Home() {
       <section id="depoimentos" className="relative py-24 md:py-32 bg-white overflow-hidden">
         {/* Animated Umbrella Decoration */}
         <div className="absolute top-0 right-0 w-64 h-64 md:w-96 md:h-96 pointer-events-none z-0 translate-x-1/4 -translate-y-1/4">
-          <DotLottiePlayer
+          <DotLottieReact
             src="/JoyPixels Umbrella with Raindrops Animated Emoji.lottie"
             autoplay
             loop
@@ -445,15 +456,15 @@ export default function Home() {
           <div className="relative w-full flex flex-col lg:flex-row items-center justify-center min-h-[700px] py-12 px-6">
             
             {/* Left: Lottie Background - Taking up more space */}
-            <div className="lg:w-[65%] w-full relative z-0 flex justify-center lg:justify-end">
+            <div className="lg:w-[70%] w-full relative z-0 flex justify-center lg:justify-end">
               <motion.div 
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
-                className="w-full max-w-4xl h-full"
+                className="relative w-full max-w-7xl h-full transform scale-125 transition-transform duration-700"
               >
                 <div className="w-full h-full opacity-100">
-                  <DotLottiePlayer
+                  <DotLottieReact
                     src="/Doctor check.lottie"
                     autoplay
                     loop

@@ -29,7 +29,7 @@ import {
   X
 } from 'lucide-react';
 import { ProtectionDome } from '@/components/ProtectionDome';
-import { DotLottiePlayer } from '@dotlottie/react-player';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { TalkingMascot } from '@/components/MascotTip';
@@ -137,8 +137,8 @@ export default function SegurosParaPessoas() {
       <section className="relative py-32 px-6 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1">
-            <div className="w-full max-w-lg mx-auto">
-              <DotLottiePlayer
+            <div className="relative w-full max-w-4xl mx-auto transform scale-110 transition-transform duration-700">
+              <DotLottieReact
                 src="/Doctor.lottie"
                 autoplay
                 loop
@@ -207,8 +207,8 @@ export default function SegurosParaPessoas() {
           </div>
 
           <div className="relative">
-            <div className="w-full max-w-lg mx-auto opacity-80">
-              <DotLottiePlayer
+            <div className="w-full max-w-4xl mx-auto opacity-90 transform scale-110 transition-transform duration-700">
+              <DotLottieReact
                 src="/Vital signs.lottie"
                 autoplay
                 loop
@@ -224,8 +224,8 @@ export default function SegurosParaPessoas() {
       <section className="relative py-32 px-6 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1">
-            <div className="w-full max-w-md mx-auto">
-              <DotLottiePlayer
+            <div className="relative w-full max-w-4xl mx-auto transform scale-110 transition-transform duration-700">
+              <DotLottieReact
                 src="/Dental Care.lottie"
                 autoplay
                 loop

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { DotLottiePlayer } from '@dotlottie/react-player';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 /* ============================================================
    TalkingMascot — Grouped mascot and cloud for the left corner
@@ -23,9 +23,9 @@ export function TalkingMascot({ message }: { message?: string }) {
       <style jsx>{`
         .talking-mascot-wrapper {
           position: absolute;
-          right: -420px; /* Pushed further out to avoid overlap */
-          top: 480px;   /* Aligned near the form card level */
-          width: 380px;
+          right: -480px; /* Adjusted further out for larger size */
+          top: 450px;   /* Slightly higher */
+          width: 450px;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -35,20 +35,34 @@ export function TalkingMascot({ message }: { message?: string }) {
 
         .cloud-container {
           width: 100%;
-          margin-bottom: -40px; /* Overlap slightly with mascot */
-          margin-right: 0;      /* Centered above mascot */
+          margin-bottom: -50px; /* Adjusted for larger size */
+          margin-right: 0;
         }
 
         .mascot-container {
-          width: 320px;
-          height: 320px;
+          width: 400px;
+          height: 400px;
         }
 
         /* Responsive adjustments */
         @media (max-width: 1400px) {
           .talking-mascot-wrapper {
-            right: -380px;
-            width: 320px;
+            right: -420px;
+            width: 380px;
+          }
+          .cloud-container {
+            margin-right: 0;
+          }
+          .mascot-container {
+            width: 340px;
+            height: 340px;
+          }
+        }
+
+        @media (max-width: 1200px) {
+          .talking-mascot-wrapper {
+            right: -350px;
+            width: 300px;
           }
           .cloud-container {
             margin-right: 0;
@@ -56,20 +70,6 @@ export function TalkingMascot({ message }: { message?: string }) {
           .mascot-container {
             width: 280px;
             height: 280px;
-          }
-        }
-
-        @media (max-width: 1200px) {
-          .talking-mascot-wrapper {
-            right: -320px;
-            width: 240px;
-          }
-          .cloud-container {
-            margin-right: 0;
-          }
-          .mascot-container {
-            width: 220px;
-            height: 220px;
           }
         }
 
@@ -87,12 +87,12 @@ export function TalkingMascot({ message }: { message?: string }) {
           }
           .cloud-container {
             margin-right: 0;
-            margin-bottom: -20px;
-            max-width: 400px;
+            margin-bottom: -30px;
+            max-width: 450px;
           }
           .mascot-container {
-            width: 200px;
-            height: 200px;
+            width: 250px;
+            height: 250px;
           }
         }
       `}</style>
@@ -116,7 +116,7 @@ export function MascotFloat() {
         animate={{ y: [0, -12, 0] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       >
-        <DotLottiePlayer
+        <DotLottieReact
           src="/mascot.lottie"
           autoplay
           loop
