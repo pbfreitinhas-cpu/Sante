@@ -33,21 +33,130 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { TalkingMascot } from '@/components/MascotTip';
+import { supabase } from '@/lib/supabase';
+
+type FormData = {
+  nome: string;
+  email: string;
+  whatsapp: string;
+  seguros_selecionados: string[];
+  data_nascimento: string;
+  sexo: string;
+  ocupacao: string;
+  renda: string;
+  tipo_plano: string;
+  localizacao: string;
+  vidas: string;
+  idades: string;
+  coparticipacao: string;
+  acomodacao: string;
+  abrangencia: string;
+  prioridade: string;
+  hospitais: string;
+  frequencia_uso: string;
+  coberturas: string[];
+  mensagem: string;
+};
+
+const INITIAL_DATA: FormData = {
+  nome: '', email: '', whatsapp: '', seguros_selecionados: [],
+  data_nascimento: '', sexo: '', ocupacao: '', renda: '',
+  tipo_plano: 'Individual', localizacao: '', vidas: '', idades: '',
+  coparticipacao: 'Indiferente', acomodacao: 'Indiferente', abrangencia: 'Indiferente',
+  prioridade: '', hospitais: '', frequencia_uso: '', coberturas: [], mensagem: ''
+};
 
 export default function SegurosParaPessoas() {
+  const [formData, setFormData] = useState<FormData>(INITIAL_DATA);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const formRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedInsurances, setSelectedInsurances] = useState<string[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   const toggleInsurance = (id: string) => {
-    setSelectedInsurances(prev =>
-      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
-    );
+    setFormData(prev => {
+      const current = prev.seguros_selecionados;
+      const next = current.includes(id) ? current.filter(item => item !== id) : [...current, id];
+      return { ...prev, seguros_selecionados: next };
+    });
+  };
+
+  const toggleCobertura = (id: string) => {
+    setFormData(prev => {
+      const current = prev.coberturas;
+      const next = current.includes(id) ? current.filter(item => item !== id) : [...current, id];
+      return { ...prev, coberturas: next };
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      // 1. Upload files to Supabase Storage in parallel
+      const uploadPromises = uploadedFiles.map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const uniqueId = Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
+        const fileName = `${uniqueId}-${Date.now()}.${fileExt}`;
+        const filePath = `pessoas/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('leads')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error(`Error uploading ${file.name}:`, uploadError);
+          return null;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('leads')
+          .getPublicUrl(filePath);
+
+        return urlData?.publicUrl || null;
+      });
+
+      const results = await Promise.all(uploadPromises);
+      const fileUrls = results.filter((url): url is string => url !== null);
+
+      // 2. Clean and Prepare data for DB
+      const cleanedData = {
+        ...formData,
+        data_nascimento: formData.data_nascimento || null,
+        vidas: formData.vidas || null,
+        arquivos_url: fileUrls, // Save the list of URLs
+      };
+
+      // 3. Insert into Database
+      const { error } = await supabase.from('leads_pessoas').insert([cleanedData]);
+      if (error) {
+        console.error('Supabase Error:', error);
+        setSubmitStatus('error');
+        alert(`Erro Supabase: ${error.message}`);
+        return;
+      }
+      setSubmitStatus('success');
+      setUploadedFiles([]); // Clear files on success
+    } catch (err: any) {
+      console.error('Unexpected Error:', err);
+      setSubmitStatus('error');
+      alert(`Erro inesperado: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -375,21 +484,21 @@ export default function SegurosParaPessoas() {
                   <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Nome Completo</label>
                   <div className="relative group">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input type="text" placeholder="Seu nome" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
+                    <input name="nome" value={formData.nome} onChange={handleChange} required type="text" placeholder="Seu nome" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">E-mail</label>
                   <div className="relative group">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input type="email" placeholder="seu@email.com" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
+                    <input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder="seu@email.com" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
                   </div>
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">WhatsApp</label>
                   <div className="relative group">
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input type="tel" placeholder="(11) 99999-9999" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
+                    <input name="whatsapp" value={formData.whatsapp} onChange={handleChange} required type="tel" placeholder="(11) 99999-9999" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
                   </div>
                 </div>
               </div>
@@ -411,11 +520,11 @@ export default function SegurosParaPessoas() {
                     <input
                       type="checkbox"
                       className="peer sr-only"
-                      checked={selectedInsurances.includes(opt.id)}
+                      checked={formData.seguros_selecionados.includes(opt.id)}
                       onChange={() => toggleInsurance(opt.id)}
                     />
                     <div className="p-6 rounded-3xl border border-white/10 bg-white/5 flex flex-col items-center gap-4 transition-all peer-checked:border-primary-500 peer-checked:bg-primary-500/10 hover:bg-white/10">
-                      <opt.icon className="w-8 h-8 text-neutral-400 group-hover:text-primary-500 transition-colors peer-checked:text-primary-500" />
+                      <opt.icon className={`w-8 h-8 transition-colors ${formData.seguros_selecionados.includes(opt.id) ? 'text-primary-500' : 'text-neutral-400 group-hover:text-primary-500'}`} />
                       <span className="text-xs font-black uppercase tracking-widest text-center">{opt.label}</span>
                     </div>
                   </label>
@@ -425,7 +534,7 @@ export default function SegurosParaPessoas() {
 
             {/* [2.5] DETALHES SEGURO DE VIDA (CONDICIONAL) */}
             <AnimatePresence>
-              {selectedInsurances.includes('vida') && (
+              {formData.seguros_selecionados.includes('vida') && (
                 <motion.div
                   initial={{ opacity: 0, height: 0, marginTop: 0 }}
                   animate={{ opacity: 1, height: 'auto', marginTop: 32 }}
@@ -441,29 +550,29 @@ export default function SegurosParaPessoas() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Data de Nascimento</label>
-                      <input type="date" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium outline-none focus:border-primary-500/50 transition-all text-sm" />
+                      <input name="data_nascimento" value={formData.data_nascimento} onChange={handleChange} type="date" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium outline-none focus:border-primary-500/50 transition-all text-sm [color-scheme:dark]" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Sexo</label>
-                      <select className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm font-medium outline-none focus:border-primary-500 transition-all appearance-none">
-                        <option className="bg-neutral-900">Selecione...</option>
-                        <option className="bg-neutral-900">Masculino</option>
-                        <option className="bg-neutral-900">Feminino</option>
+                      <select name="sexo" value={formData.sexo} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm font-medium outline-none focus:border-primary-500 transition-all appearance-none">
+                        <option value="" className="bg-neutral-900">Selecione...</option>
+                        <option value="Masculino" className="bg-neutral-900">Masculino</option>
+                        <option value="Feminino" className="bg-neutral-900">Feminino</option>
                       </select>
                     </div>
                     <div className="space-y-2">
                       <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Ocupação</label>
-                      <input type="text" placeholder="Ex: Engenheiro, Médico..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
+                      <input name="ocupacao" value={formData.ocupacao} onChange={handleChange} type="text" placeholder="Ex: Engenheiro, Médico..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Faixa de Renda</label>
-                      <select className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm font-medium outline-none focus:border-primary-500 transition-all appearance-none">
-                        <option className="bg-neutral-900">Selecione...</option>
-                        <option className="bg-neutral-900">Até R$ 2.500,00</option>
-                        <option className="bg-neutral-900">De R$ 2.500,01 até R$ 5.000,00</option>
-                        <option className="bg-neutral-900">De R$ 5.000,01 até R$ 7.500,00</option>
-                        <option className="bg-neutral-900">De R$ 7.500,01 até R$ 10.000,00</option>
-                        <option className="bg-neutral-900">Acima de R$ 10.000,00</option>
+                      <select name="renda" value={formData.renda} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm font-medium outline-none focus:border-primary-500 transition-all appearance-none">
+                        <option value="" className="bg-neutral-900">Selecione...</option>
+                        <option value="Até R$ 2.500,00" className="bg-neutral-900">Até R$ 2.500,00</option>
+                        <option value="De R$ 2.500,01 até R$ 5.000,00" className="bg-neutral-900">De R$ 2.500,01 até R$ 5.000,00</option>
+                        <option value="De R$ 5.000,01 até R$ 7.500,00" className="bg-neutral-900">De R$ 5.000,01 até R$ 7.500,00</option>
+                        <option value="De R$ 7.500,01 até R$ 10.000,00" className="bg-neutral-900">De R$ 7.500,01 até R$ 10.000,00</option>
+                        <option value="Acima de R$ 10.000,00" className="bg-neutral-900">Acima de R$ 10.000,00</option>
                       </select>
                     </div>
                   </div>
@@ -483,7 +592,7 @@ export default function SegurosParaPessoas() {
                   <div className="grid grid-cols-3 gap-2">
                     {['Individual', 'Familiar', 'MEI'].map(type => (
                       <label key={type} className="cursor-pointer group">
-                        <input type="radio" name="tipo_plano" className="peer sr-only" />
+                        <input type="radio" name="tipo_plano" value={type} checked={formData.tipo_plano === type} onChange={handleChange} className="peer sr-only" />
                         <div className="py-3 px-1 rounded-xl border border-white/10 bg-white/5 text-[0.6rem] font-black uppercase tracking-tighter text-center transition-all peer-checked:bg-white peer-checked:text-neutral-950">
                           {type}
                         </div>
@@ -496,7 +605,7 @@ export default function SegurosParaPessoas() {
                   <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Localização</label>
                   <div className="relative group">
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input type="text" placeholder="Cidade/Região" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
+                    <input name="localizacao" value={formData.localizacao} onChange={handleChange} type="text" placeholder="Cidade/Região" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
                   </div>
                 </div>
 
@@ -504,7 +613,7 @@ export default function SegurosParaPessoas() {
                   <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Quantidade de Vidas</label>
                   <div className="relative group">
                     <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input type="number" placeholder="Ex: 5" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
+                    <input name="vidas" value={formData.vidas} onChange={handleChange} type="number" placeholder="Ex: 5" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
                   </div>
                 </div>
 
@@ -512,7 +621,7 @@ export default function SegurosParaPessoas() {
                   <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Idade das pessoas</label>
                   <div className="relative group">
                     <Activity className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input type="text" placeholder="Ex: 25, 30, 2" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
+                    <input name="idades" value={formData.idades} onChange={handleChange} type="text" placeholder="Ex: 25, 30, 2" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
                   </div>
                 </div>
               </div>
@@ -529,7 +638,7 @@ export default function SegurosParaPessoas() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="space-y-3">
                     <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Coparticipação</label>
-                    <select className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
+                    <select name="coparticipacao" value={formData.coparticipacao} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
                       <option className="bg-neutral-900">Indiferente</option>
                       <option className="bg-neutral-900">Sim</option>
                       <option className="bg-neutral-900">Não</option>
@@ -537,7 +646,7 @@ export default function SegurosParaPessoas() {
                   </div>
                   <div className="space-y-3">
                     <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Acomodação</label>
-                    <select className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
+                    <select name="acomodacao" value={formData.acomodacao} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
                       <option className="bg-neutral-900">Indiferente</option>
                       <option className="bg-neutral-900">Apartamento</option>
                       <option className="bg-neutral-900">Enfermaria</option>
@@ -545,7 +654,7 @@ export default function SegurosParaPessoas() {
                   </div>
                   <div className="space-y-3">
                     <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Abrangência</label>
-                    <select className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
+                    <select name="abrangencia" value={formData.abrangencia} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
                       <option className="bg-neutral-900">Indiferente</option>
                       <option className="bg-neutral-900">Regional</option>
                       <option className="bg-neutral-900">Nacional</option>
@@ -563,7 +672,7 @@ export default function SegurosParaPessoas() {
                       'Custo x Qualidade'
                     ].map(prio => (
                       <label key={prio} className="cursor-pointer">
-                        <input type="radio" name="prioridade" className="peer sr-only" />
+                        <input type="radio" name="prioridade" value={prio} checked={formData.prioridade === prio} onChange={handleChange} className="peer sr-only" />
                         <div className="p-4 rounded-2xl border border-white/10 bg-white/5 text-[0.65rem] font-black uppercase tracking-widest text-center transition-all peer-checked:bg-primary-500 peer-checked:text-neutral-950">
                           {prio}
                         </div>
@@ -576,7 +685,7 @@ export default function SegurosParaPessoas() {
                   <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Hospitais que não podem faltar</label>
                   <div className="relative group">
                     <Building2 className="absolute left-4 top-4 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <textarea rows={2} placeholder="Ex: Albert Einstein, Sírio-Libanês, etc..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
+                    <textarea name="hospitais" value={formData.hospitais} onChange={handleChange} rows={2} placeholder="Ex: Albert Einstein, Sírio-Libanês, etc..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
                   </div>
                 </div>
               </div>
@@ -594,7 +703,7 @@ export default function SegurosParaPessoas() {
                   <div className="flex gap-2">
                     {['Baixa', 'Média', 'Alta'].map(u => (
                       <label key={u} className="flex-1 cursor-pointer">
-                        <input type="radio" name="uso" className="peer sr-only" />
+                        <input type="radio" name="frequencia_uso" value={u} checked={formData.frequencia_uso === u} onChange={handleChange} className="peer sr-only" />
                         <div className="py-3 rounded-xl border border-white/10 bg-white/5 text-[0.6rem] font-black uppercase tracking-widest text-center peer-checked:border-primary-500 peer-checked:text-primary-500">
                           {u}
                         </div>
@@ -607,7 +716,7 @@ export default function SegurosParaPessoas() {
                   <div className="flex flex-wrap gap-2">
                     {['Terapia', 'Fisioterapia', 'Maternidade'].map(c => (
                       <label key={c} className="cursor-pointer">
-                        <input type="checkbox" className="peer sr-only" />
+                        <input type="checkbox" checked={formData.coberturas.includes(c)} onChange={() => toggleCobertura(c)} className="peer sr-only" />
                         <div className="px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-[0.6rem] font-black uppercase tracking-widest peer-checked:bg-white/20">
                           {c}
                         </div>
@@ -626,28 +735,63 @@ export default function SegurosParaPessoas() {
               </div>
 
               <div className="space-y-8">
-                <div className="p-10 border-2 border-dashed border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center text-center group hover:border-primary-500/50 transition-colors cursor-pointer">
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-10 border-2 border-dashed border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center text-center group hover:border-primary-500/50 transition-colors cursor-pointer bg-white/5"
+                >
                   <Upload className="w-10 h-10 text-neutral-500 group-hover:text-primary-500 transition-colors mb-4" />
                   <h4 className="text-sm font-bold mb-1">Upload de arquivo (Opcional)</h4>
                   <p className="text-xs text-neutral-500">Se você for MEI ou possuir várias vidas, anexe um PDF ou Planilha.</p>
                 </div>
 
+                {/* Lista de arquivos enviados no passo final */}
+                {uploadedFiles.length > 0 && (
+                  <div className="mt-6 space-y-2 text-left w-full">
+                    <p className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest ml-1">Arquivos anexados:</p>
+                    {uploadedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 border border-white/5">
+                        <FileText className="w-4 h-4 text-primary-500 shrink-0" />
+                        <span className="text-sm text-white font-medium truncate flex-1">{file.name}</span>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); removeFile(index); }}
+                          className="w-6 h-6 rounded-full bg-white/20 hover:bg-red-500/20 flex items-center justify-center text-neutral-400 hover:text-red-400 transition-all"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Algo importante que devemos saber?</label>
-                  <textarea rows={3} placeholder="Sua mensagem..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
+                  <textarea name="mensagem" value={formData.mensagem} onChange={handleChange} rows={3} placeholder="Sua mensagem..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
                 </div>
               </div>
             </div>
 
             {/* SUBMIT */}
-            <motion.button
-              whileHover={{ scale: 1.02, boxShadow: "0 0 40px rgba(204, 243, 47, 0.4)" }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-8 bg-primary-500 text-neutral-950 font-black rounded-[2.5rem] shadow-glow-primary text-sm tracking-[0.3em] uppercase flex items-center justify-center gap-4"
-            >
-              Enviar para análise
-              <ArrowRight className="w-5 h-5" />
-            </motion.button>
+            <div className="space-y-4">
+              <motion.button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                whileHover={!isSubmitting ? { scale: 1.02, boxShadow: "0 0 40px rgba(204, 243, 47, 0.4)" } : {}}
+                whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                className={`w-full py-8 bg-primary-500 text-neutral-950 font-black rounded-[2.5rem] shadow-glow-primary text-sm tracking-[0.3em] uppercase flex items-center justify-center gap-4 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {isSubmitting ? 'Enviando...' : 'Enviar para análise'}
+                {!isSubmitting && <ArrowRight className="w-5 h-5" />}
+              </motion.button>
+
+              {submitStatus === 'success' && (
+                <p className="text-center text-xs font-black text-primary-500 uppercase tracking-[0.2em] animate-pulse">✓ Enviado com sucesso! Entraremos em contato.</p>
+              )}
+              {submitStatus === 'error' && (
+                <p className="text-center text-xs font-black text-red-500 uppercase tracking-[0.2em]">× Erro ao enviar. Tente novamente.</p>
+              )}
+            </div>
 
             <p className="text-center text-[0.6rem] font-bold text-neutral-500 uppercase tracking-[0.2em] pt-4">
               Ao enviar, você concorda com nossa política de privacidade.

@@ -8,6 +8,7 @@ import { Building2, User, Globe, ChevronRight, ChevronDown, ShieldCheck, MapPin,
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { supabase } from '@/lib/supabase';
 
 const testimonials = [
   {
@@ -126,6 +127,41 @@ function SearchHandler({ setSolicitacao, contatoRef }: {
 export default function Home() {
   const [hoveredSide, setHoveredSide] = useState<'pj' | 'pf' | null>(null);
   const [solicitacao, setSolicitacao] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      nome: formData.get('nome') as string,
+      email: formData.get('email') as string,
+      whatsapp: formData.get('whatsapp') as string,
+      mensagem: solicitacao,
+    };
+
+    try {
+      const { error } = await supabase.from('leads_contato').insert([data]);
+      if (error) {
+        console.error('Supabase Error:', error);
+        setSubmitStatus('error');
+        alert(`Erro do Supabase: ${error.message}`); // Alerta temporário para debug
+        return;
+      }
+      setSubmitStatus('success');
+      setSolicitacao('');
+      (e.target as HTMLFormElement).reset();
+    } catch (err: any) {
+      console.error('Unexpected Error:', err);
+      setSubmitStatus('error');
+      alert(`Erro inesperado: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   const contatoRef = useRef<HTMLDivElement>(null);
 
   const partners = [
@@ -493,12 +529,14 @@ export default function Home() {
                   <p className="text-xs text-neutral-500 font-medium tracking-tight">Especialistas prontos para te atender.</p>
                 </div>
                 
-                <form className="flex flex-col gap-5">
+                <form className="flex flex-col gap-5" onSubmit={handleContactSubmit}>
                   <div className="space-y-1.5">
                     <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">Nome completo</label>
                     <div className="relative group">
                       <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-blue-500 transition-colors" />
                       <input 
+                        name="nome"
+                        required
                         type="text" 
                         placeholder="Como te chamamos?" 
                         className="w-full bg-white border border-neutral-200 rounded-2xl py-4 pl-12 pr-6 text-neutral-900 font-bold placeholder:text-neutral-400 outline-none focus:ring-4 focus:ring-brand-blue-500/10 focus:border-brand-blue-500 transition-all text-xs" 
@@ -511,6 +549,8 @@ export default function Home() {
                     <div className="relative group">
                       <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-blue-500 transition-colors" />
                       <input 
+                        name="email"
+                        required
                         type="email" 
                         placeholder="contato@sante.com.br" 
                         className="w-full bg-white border border-neutral-200 rounded-2xl py-4 pl-12 pr-6 text-neutral-900 font-bold placeholder:text-neutral-300 outline-none focus:ring-4 focus:ring-brand-blue-500/10 focus:border-brand-blue-500 transition-all text-xs" 
@@ -523,6 +563,8 @@ export default function Home() {
                     <div className="relative group">
                       <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-blue-500 transition-colors" />
                       <input 
+                        name="whatsapp"
+                        required
                         type="tel" 
                         placeholder="(11) 99999-9999" 
                         className="w-full bg-white border border-neutral-200 rounded-2xl py-4 pl-12 pr-6 text-neutral-900 font-bold placeholder:text-neutral-300 outline-none focus:ring-4 focus:ring-brand-blue-500/10 focus:border-brand-blue-500 transition-all text-xs" 
@@ -535,16 +577,27 @@ export default function Home() {
                     <textarea 
                       placeholder="Fale um pouco sobre o que você busca..." 
                       rows={2}
+                      required
                       value={solicitacao}
                       onChange={(e) => setSolicitacao(e.target.value)}
                       className={`w-full bg-white border rounded-2xl py-4 px-6 text-neutral-900 font-bold placeholder:text-neutral-400 outline-none focus:ring-4 focus:ring-brand-blue-500/10 focus:border-brand-blue-500 transition-all text-xs resize-none ${solicitacao ? 'border-primary-500 ring-4 ring-primary-500/10' : 'border-neutral-200'}`}
                     />
                   </div>
 
-                  <button className="w-full py-5 mt-2 bg-gradient-to-r from-brand-blue-600 to-primary-500 text-white font-black rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-2 group">
-                    Enviar Proposta
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <button 
+                    disabled={isSubmitting}
+                    className={`w-full py-5 mt-2 bg-gradient-to-r from-brand-blue-600 to-primary-500 text-white font-black rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-2 group ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {isSubmitting ? 'Enviando...' : 'Enviar Proposta'}
+                    {!isSubmitting && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                   </button>
+
+                  {submitStatus === 'success' && (
+                    <p className="text-center text-xs font-bold text-green-600 uppercase tracking-widest mt-2 animate-bounce">✓ Enviado com sucesso!</p>
+                  )}
+                  {submitStatus === 'error' && (
+                    <p className="text-center text-xs font-bold text-red-600 uppercase tracking-widest mt-2">× Erro ao enviar. Tente novamente.</p>
+                  )}
                 </form>
                 
                 <div className="mt-8 pt-6 border-t border-neutral-100/50 flex flex-col sm:flex-row items-center justify-between gap-4">

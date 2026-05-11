@@ -33,7 +33,7 @@ export const Footer = () => {
       { name: 'Contato', href: '/#contato' }
     ],
     contato: [
-      { icon: Phone, text: '(11) 98765-4321', label: 'WhatsApp' },
+      { icon: Phone, text: '(11) 91330-1536', label: 'WhatsApp' },
       { icon: Mail, text: 'contato@sante.com.br', label: 'E-mail' },
       { icon: MapPin, text: 'Av. Paulista, 1000 - São Paulo', label: 'Endereço' }
     ]

@@ -33,6 +33,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { CorporateQuoteForm } from '@/components/CorporateQuoteForm';
+import { TalkingMascot } from '@/components/MascotTip';
 
 export default function SegurosParaEmpresas() {
   const formRef = useRef<HTMLDivElement>(null);
@@ -258,6 +259,7 @@ export default function SegurosParaEmpresas() {
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-brand-blue-500/10 rounded-full blur-[120px]" />
 
         <div className="max-w-4xl mx-auto px-6 relative z-10">
+          <TalkingMascot />
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span>

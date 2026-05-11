@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TalkingMascot } from '@/components/MascotTip';
+import { supabase } from '@/lib/supabase';
 import {
   Building2,
   FileText,
@@ -88,6 +88,67 @@ export function CorporateQuoteForm() {
   const [formData, setFormData] = useState<FormData>(INITIAL_DATA);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      // 1. Upload files to Supabase Storage in parallel
+      const uploadPromises = uploadedFiles.map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        // More robust unique name: random string + timestamp + index-like randomness
+        const uniqueId = Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
+        const fileName = `${uniqueId}-${Date.now()}.${fileExt}`;
+        const filePath = `empresas/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('leads')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error(`Error uploading ${file.name}:`, uploadError);
+          return null;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('leads')
+          .getPublicUrl(filePath);
+
+        return urlData?.publicUrl || null;
+      });
+
+      const results = await Promise.all(uploadPromises);
+      const fileUrls = results.filter((url): url is string => url !== null);
+
+      // 2. Clean and Prepare data for DB
+      const cleanedData = {
+        ...formData,
+        data_inicio: formData.data_inicio || null,
+        num_colaboradores: formData.num_colaboradores || null,
+        arquivos_url: fileUrls, // Save the list of URLs
+      };
+
+      // 3. Insert into Database
+      const { error } = await supabase.from('leads_empresas').insert([cleanedData]);
+      if (error) {
+        console.error('Supabase Error:', error);
+        setSubmitStatus('error');
+        alert(`Erro Supabase: ${error.message}`);
+        return;
+      }
+      setSubmitStatus('success');
+      setUploadedFiles([]); // Clear files on success
+    } catch (err: any) {
+      console.error('Unexpected Error:', err);
+      setSubmitStatus('error');
+      alert(`Erro inesperado: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) setCurrentStep(prev => prev + 1);
@@ -552,14 +613,46 @@ export function CorporateQuoteForm() {
         <textarea name="hospitais_desejados" value={formData.hospitais_desejados} onChange={handleChange} rows={2} placeholder="Ex: Albert Einstein, Sírio Libanês, Fleury..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
       </div>
 
+      <div className="pt-10 border-t border-white/10">
+        <div className="flex items-center gap-3 mb-6">
+          <Upload className="w-5 h-5 text-primary-500" />
+          <h4 className="text-sm font-black uppercase tracking-wider text-white">Documentos Opcionais</h4>
+        </div>
+        
+        <div 
+          onClick={() => fileInputRef.current?.click()}
+          className="p-10 border-2 border-dashed border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center text-center group hover:border-primary-500/50 transition-colors cursor-pointer bg-white/5"
+        >
+          <Upload className="w-10 h-10 text-neutral-500 group-hover:text-primary-500 transition-colors mb-4" />
+          <h4 className="text-sm font-bold mb-1">Upload de arquivo (Opcional)</h4>
+          <p className="text-xs text-neutral-500">Se você já possui uma planilha de vidas ou cotações anteriores, anexe aqui.</p>
+        </div>
+
+        {/* Lista de arquivos específicos para este passo */}
+        {uploadedFiles.length > 0 && (
+          <div className="mt-6 space-y-2">
+            {uploadedFiles.map((file, index) => (
+              <div key={index} className="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/10">
+                <FileText className="w-4 h-4 text-primary-500 shrink-0" />
+                <span className="text-sm text-white font-medium truncate flex-1">{file.name}</span>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); removeFile(index); }}
+                  className="w-6 h-6 rounded-full bg-white/10 hover:bg-red-500/20 flex items-center justify-center text-neutral-400 hover:text-red-400 transition-all"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
     </motion.div>
   );
 
   return (
     <div className="w-full relative">
-      {/* Talking Mascot positioned in the left corner area */}
-      <TalkingMascot />
-
       {/* ATALHO RÁPIDO + UPLOAD */}
       <div className="bg-gradient-to-br from-primary-500/10 via-brand-blue-500/5 to-transparent backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-primary-500/20 shadow-2xl mb-10">
         <div className="flex items-center gap-3 mb-6">
@@ -675,14 +768,25 @@ export function CorporateQuoteForm() {
             Próxima Etapa <ArrowRight className="w-4 h-4" />
           </motion.button>
         ) : (
-          <motion.button 
-            whileHover={{ scale: 1.05, boxShadow: "0 0 40px rgba(204, 243, 47, 0.4)" }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-4 bg-primary-500 text-neutral-950 font-black rounded-full shadow-glow-primary text-xs uppercase tracking-widest flex items-center gap-2"
-          >
-            Enviar para Estudo
-            <ArrowRight className="w-4 h-4" />
-          </motion.button>
+          <div className="flex flex-col items-end gap-4">
+            <motion.button 
+              whileHover={!isSubmitting ? { scale: 1.05, boxShadow: "0 0 40px rgba(204, 243, 47, 0.4)" } : {}}
+              whileTap={!isSubmitting ? { scale: 0.95 } : {}}
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className={`px-8 py-4 bg-primary-500 text-neutral-900 font-black rounded-full shadow-glow-primary text-xs uppercase tracking-widest flex items-center gap-2 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {isSubmitting ? 'Enviando...' : 'Enviar para Estudo'}
+              {!isSubmitting && <ArrowRight className="w-4 h-4" />}
+            </motion.button>
+            
+            {submitStatus === 'success' && (
+              <p className="text-xs font-black text-primary-500 uppercase tracking-widest animate-pulse">✓ Enviado com sucesso! Entraremos em contato.</p>
+            )}
+            {submitStatus === 'error' && (
+              <p className="text-xs font-black text-red-500 uppercase tracking-widest">× Erro ao enviar. Tente novamente.</p>
+            )}
+          </div>
         )}
       </div>
 
