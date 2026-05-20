@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
+import { useTranslation } from '@/contexts/LanguageContext';
 import {
   Building2,
   FileText,
@@ -90,6 +91,7 @@ export function CorporateQuoteForm() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const { t } = useTranslation();
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -222,41 +224,41 @@ export function CorporateQuoteForm() {
   const step1 = (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">Dados da Empresa</h3>
-        <p className="text-neutral-400 text-sm mt-2">Conte um pouco sobre o seu negócio para começarmos.</p>
+        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">{t('corp.form.step1.title')}</h3>
+        <p className="text-neutral-400 text-sm mt-2">{t('corp.form.step1.desc')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Nome da Empresa</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.companyName')}</label>
           <div className="relative group">
             <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-            <input name="empresa_nome" value={formData.empresa_nome} onChange={handleChange} type="text" placeholder="Razão Social ou Fantasia" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
+            <input name="empresa_nome" value={formData.empresa_nome} onChange={handleChange} type="text" placeholder={t('cf.companyName.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
           </div>
         </div>
         <div className="space-y-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">CNPJ</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.cnpj')}</label>
           <div className="relative group">
             <FileText className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
             <input name="empresa_cnpj" value={formData.empresa_cnpj} onChange={handleChange} type="text" placeholder="00.000.000/0001-00" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
           </div>
         </div>
         <div className="space-y-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Nome do Responsável</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.responsible')}</label>
           <div className="relative group">
             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-            <input name="empresa_responsavel" value={formData.empresa_responsavel} onChange={handleChange} type="text" placeholder="Quem falará conosco?" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
+            <input name="empresa_responsavel" value={formData.empresa_responsavel} onChange={handleChange} type="text" placeholder={t('cf.responsible.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
           </div>
         </div>
         <div className="space-y-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">E-mail Corporativo</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.email')}</label>
           <div className="relative group">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
             <input name="empresa_email" value={formData.empresa_email} onChange={handleChange} type="email" placeholder="rh@empresa.com.br" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
           </div>
         </div>
         <div className="space-y-2 md:col-span-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">WhatsApp de Contato</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.whatsapp')}</label>
           <div className="relative group">
             <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
             <input name="empresa_whatsapp" value={formData.empresa_whatsapp} onChange={handleChange} type="tel" placeholder="(11) 99999-9999" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
@@ -269,15 +271,15 @@ export function CorporateQuoteForm() {
   const step2 = (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">O que sua empresa precisa?</h3>
-        <p className="text-neutral-400 text-sm mt-2">Você pode selecionar mais de uma opção.</p>
+        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">{t('corp.form.step2.title')}</h3>
+        <p className="text-neutral-400 text-sm mt-2">{t('corp.form.step2.desc')}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { id: 'saude', label: 'Plano de Saúde', icon: Stethoscope },
-          { id: 'vida', label: 'Seguro de Vida', icon: Heart },
-          { id: 'odonto', label: 'Plano Odontológico', icon: Activity }
+          { id: 'saude', label: t('cf.healthPlan'), icon: Stethoscope },
+          { id: 'vida', label: t('cf.lifeInsurance'), icon: Heart },
+          { id: 'odonto', label: t('cf.dentalPlan'), icon: Activity }
         ].map(opt => {
           const isSelected = formData.produtos_desejados.includes(opt.id);
           return (
@@ -301,23 +303,23 @@ export function CorporateQuoteForm() {
   const step3 = (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">Informações Gerais</h3>
+        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">{t('corp.form.step3.title')}</h3>
       </div>
 
       <div className="grid grid-cols-1 gap-8 max-w-lg mx-auto">
         <div className="space-y-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Data de início desejada</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.startDate')}</label>
           <input name="data_inicio" value={formData.data_inicio} onChange={handleChange} type="date" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm [color-scheme:dark]" />
         </div>
 
         <div className="space-y-4">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">A empresa já possui esse(s) benefício(s)?</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.hasBenefit')}</label>
           <div className="grid grid-cols-2 gap-4">
             {['sim', 'nao'].map(opt => (
               <label key={opt} className="cursor-pointer">
                 <input type="radio" name="possui_beneficio" value={opt} checked={formData.possui_beneficio === opt} onChange={handleChange} className="peer sr-only" />
                 <div className="py-4 rounded-xl border border-white/10 bg-white/5 text-xs font-black uppercase tracking-widest text-center peer-checked:border-primary-500 peer-checked:text-primary-500 peer-checked:bg-primary-500/10 transition-all">
-                  {opt === 'sim' ? 'Sim' : 'Não'}
+                  {opt === 'sim' ? t('cf.yes') : t('cf.no')}
                 </div>
               </label>
             ))}
@@ -326,8 +328,8 @@ export function CorporateQuoteForm() {
 
         {formData.possui_beneficio === 'sim' && (
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-2">
-            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Qual?</label>
-            <input name="qual_beneficio" value={formData.qual_beneficio} onChange={handleChange} type="text" placeholder="Ex: SulAmérica Saúde, Bradesco Dental..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
+            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.which')}</label>
+            <input name="qual_beneficio" value={formData.qual_beneficio} onChange={handleChange} type="text" placeholder={t('cf.which.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
           </motion.div>
         )}
       </div>
@@ -337,12 +339,12 @@ export function CorporateQuoteForm() {
   const step4 = (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">Perfil da Empresa</h3>
+        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">{t('corp.form.step4.title')}</h3>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
         <div className="space-y-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Número de Colaboradores</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.employees')}</label>
           <div className="relative group">
             <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
             <input name="num_colaboradores" value={formData.num_colaboradores} onChange={handleChange} type="number" placeholder="Ex: 50" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
@@ -350,7 +352,7 @@ export function CorporateQuoteForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Cidade / Estado</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.cityState')}</label>
           <div className="relative group">
             <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
             <input name="cidade_estado" value={formData.cidade_estado} onChange={handleChange} type="text" placeholder="Ex: São Paulo / SP" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
@@ -358,7 +360,7 @@ export function CorporateQuoteForm() {
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Segmento da Empresa</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.segment')}</label>
           <div className="relative group">
             <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
             <input name="segmento" value={formData.segmento} onChange={handleChange} type="text" placeholder="Ex: Tecnologia, Indústria, Comércio..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
@@ -371,13 +373,13 @@ export function CorporateQuoteForm() {
   const step5 = (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">Detalhes por Produto</h3>
-        <p className="text-neutral-400 text-sm mt-2">Vamos customizar sua solicitação com base nas suas escolhas.</p>
+        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">{t('corp.form.step5.title')}</h3>
+        <p className="text-neutral-400 text-sm mt-2">{t('corp.form.step5.desc')}</p>
       </div>
 
       {formData.produtos_desejados.length === 0 && (
         <div className="text-center text-neutral-500 py-10 bg-white/5 rounded-3xl border border-white/10">
-          Você não selecionou nenhum produto no Passo 2.
+          {t('cf.noProducts')}
         </div>
       )}
 
@@ -386,16 +388,16 @@ export function CorporateQuoteForm() {
         <div className="p-8 bg-black/20 rounded-[2rem] border border-white/5 space-y-8">
           <div className="flex items-center gap-3 border-b border-white/10 pb-4">
             <Heart className="w-6 h-6 text-brand-blue-500" />
-            <h4 className="text-lg font-bold text-white uppercase tracking-widest">Seguro de Vida</h4>
+            <h4 className="text-lg font-bold text-white uppercase tracking-widest">{t('cf.life.title')}</h4>
           </div>
 
           <div className="space-y-4">
-            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Tipo de Cobertura</label>
+            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('cf.life.coverageType')}</label>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
-                { val: 'por_colaborador', label: 'Valor por Colaborador', desc: 'Cada vida tem um capital segurado fixo.' },
-                { val: 'total_empresa', label: 'Valor Global', desc: 'Capital dividido entre os funcionários.' },
-                { val: 'acidentes_pessoais', label: 'Acidentes Pessoais', desc: 'Cobertura específica para acidentes.' }
+                { val: 'por_colaborador', label: t('cf.life.perEmployee'), desc: t('cf.life.perEmployee.desc') },
+                { val: 'total_empresa', label: t('cf.life.global'), desc: t('cf.life.global.desc') },
+                { val: 'acidentes_pessoais', label: t('cf.life.accidents'), desc: t('cf.life.accidents.desc') }
               ].map(opt => (
                 <label key={opt.val} className="cursor-pointer">
                   <input type="radio" name="vida_tipo_cobertura" value={opt.val} checked={formData.vida_tipo_cobertura === opt.val} onChange={handleChange} className="peer sr-only" />
@@ -410,7 +412,7 @@ export function CorporateQuoteForm() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Deseja incluir cônjuges?</label>
+              <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('cf.life.spouses')}</label>
               <div className="flex gap-2">
                 {['sim', 'nao'].map(opt => (
                   <label key={`conjuge_${opt}`} className="flex-1 cursor-pointer">
@@ -421,7 +423,7 @@ export function CorporateQuoteForm() {
               </div>
             </div>
             <div className="space-y-3">
-              <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Colaborador afastado?</label>
+              <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('cf.life.absent')}</label>
               <div className="flex gap-2">
                 {['sim', 'nao'].map(opt => (
                   <label key={`afastado_${opt}`} className="flex-1 cursor-pointer">
@@ -434,12 +436,12 @@ export function CorporateQuoteForm() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Definição de Capital (Valor)</label>
+            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('cf.life.capitalDef')}</label>
             <select name="vida_definicao_valor" value={formData.vida_definicao_valor} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-brand-blue-500 transition-all appearance-none">
-              <option value="" disabled className="bg-neutral-900 text-neutral-500">Selecione uma opção...</option>
-              <option value="igual_todos" className="bg-neutral-900">Igual para todos</option>
-              <option value="baseado_salario" className="bg-neutral-900">Múltiplo Salarial (ex: 12x ou 24x)</option>
-              <option value="por_cargo" className="bg-neutral-900">Diferenciado por cargo</option>
+              <option value="" disabled className="bg-neutral-900 text-neutral-500">{t('cf.life.selectOption')}</option>
+              <option value="igual_todos" className="bg-neutral-900">{t('cf.life.equalAll')}</option>
+              <option value="baseado_salario" className="bg-neutral-900">{t('cf.life.salaryBased')}</option>
+              <option value="por_cargo" className="bg-neutral-900">{t('cf.life.byPosition')}</option>
             </select>
           </div>
         </div>
@@ -450,11 +452,11 @@ export function CorporateQuoteForm() {
         <div className="p-8 bg-black/20 rounded-[2rem] border border-white/5 space-y-8">
           <div className="flex items-center gap-3 border-b border-white/10 pb-4">
             <Stethoscope className="w-6 h-6 text-primary-500" />
-            <h4 className="text-lg font-bold text-white uppercase tracking-widest">Plano de Saúde</h4>
+            <h4 className="text-lg font-bold text-white uppercase tracking-widest">{t('cf.health.title')}</h4>
           </div>
 
           <div className="space-y-4">
-            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Todos os colaboradores no mesmo plano?</label>
+            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('cf.health.samePlan')}</label>
             <div className="flex gap-4 max-w-xs">
               {['sim', 'nao'].map(opt => (
                 <label key={`mesmo_${opt}`} className="flex-1 cursor-pointer">
@@ -463,24 +465,24 @@ export function CorporateQuoteForm() {
                 </label>
               ))}
             </div>
-            <p className="text-[0.6rem] text-neutral-500 font-medium">Se "Não", dividiremos o grupo por categorias (ex: Diretoria vs. Operação).</p>
+            <p className="text-[0.6rem] text-neutral-500 font-medium">{t('cf.health.samePlan.note')}</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-3">
-              <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Tipo de Acomodação</label>
+              <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('cf.health.accommodation')}</label>
               <select name="saude_acomodacao" value={formData.saude_acomodacao} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
-                <option value="" disabled className="bg-neutral-900 text-neutral-500">Selecione...</option>
-                <option value="enfermaria" className="bg-neutral-900">Enfermaria (Coletivo)</option>
-                <option value="apartamento" className="bg-neutral-900">Apartamento (Individual)</option>
+                <option value="" disabled className="bg-neutral-900 text-neutral-500">{t('cf.health.select')}</option>
+                <option value="enfermaria" className="bg-neutral-900">{t('cf.health.ward')}</option>
+                <option value="apartamento" className="bg-neutral-900">{t('cf.health.apartment')}</option>
               </select>
             </div>
             <div className="space-y-3">
-              <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Coparticipação</label>
+              <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('cf.health.copart')}</label>
               <select name="saude_coparticipacao" value={formData.saude_coparticipacao} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
-                <option value="" disabled className="bg-neutral-900 text-neutral-500">Selecione...</option>
-                <option value="nao" className="bg-neutral-900">Sem Coparticipação</option>
-                <option value="sim" className="bg-neutral-900">Com Coparticipação</option>
+                <option value="" disabled className="bg-neutral-900 text-neutral-500">{t('cf.health.select')}</option>
+                <option value="nao" className="bg-neutral-900">{t('cf.health.noCopart')}</option>
+                <option value="sim" className="bg-neutral-900">{t('cf.health.withCopart')}</option>
               </select>
             </div>
           </div>
@@ -488,7 +490,7 @@ export function CorporateQuoteForm() {
           {formData.saude_coparticipacao === 'sim' && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4 pt-4 border-t border-white/10">
               <div className="flex justify-between">
-                <label className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest">Limite de Coparticipação (%)</label>
+                <label className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest">{t('cf.health.copartLimit')}</label>
                 <span className="text-sm font-black text-white">{formData.saude_copart_percent}%</span>
               </div>
               <input 
@@ -499,7 +501,7 @@ export function CorporateQuoteForm() {
                 onChange={handleChange}
                 className="w-full accent-primary-500" 
               />
-              <p className="text-[0.6rem] text-neutral-500 font-medium text-right">Geralmente recomendado: 20% ou 30%.</p>
+              <p className="text-[0.6rem] text-neutral-500 font-medium text-right">{t('cf.health.copartRecommend')}</p>
             </motion.div>
           )}
         </div>
@@ -510,11 +512,11 @@ export function CorporateQuoteForm() {
         <div className="p-8 bg-black/20 rounded-[2rem] border border-white/5 space-y-8">
           <div className="flex items-center gap-3 border-b border-white/10 pb-4">
             <Activity className="w-6 h-6 text-secondary-500" />
-            <h4 className="text-lg font-bold text-white uppercase tracking-widest">Odonto Empresarial</h4>
+            <h4 className="text-lg font-bold text-white uppercase tracking-widest">{t('cf.dental.title')}</h4>
           </div>
 
           <div className="space-y-4">
-            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Já possui plano Odontológico?</label>
+            <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('cf.dental.hasPlan')}</label>
             <div className="flex gap-4 max-w-xs">
               {['sim', 'nao'].map(opt => (
                 <label key={`odonto_${opt}`} className="flex-1 cursor-pointer">
@@ -527,8 +529,8 @@ export function CorporateQuoteForm() {
 
           {formData.odonto_possui_plano === 'sim' && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-2">
-              <label className="text-[0.65rem] font-black text-secondary-400 uppercase tracking-widest ml-1">Qual a operadora atual?</label>
-              <input name="odonto_qual_plano" value={formData.odonto_qual_plano} onChange={handleChange} type="text" placeholder="Ex: Amil Dental, OdontoPrev..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-secondary-500/50 transition-all text-sm" />
+              <label className="text-[0.65rem] font-black text-secondary-400 uppercase tracking-widest ml-1">{t('cf.dental.currentProvider')}</label>
+              <input name="odonto_qual_plano" value={formData.odonto_qual_plano} onChange={handleChange} type="text" placeholder={t('cf.dental.currentProvider.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-secondary-500/50 transition-all text-sm" />
             </motion.div>
           )}
         </div>
@@ -539,16 +541,16 @@ export function CorporateQuoteForm() {
   const step6 = (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-10">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">Preferências Finais</h3>
+        <h3 className="text-2xl font-bold uppercase tracking-tight text-white">{t('corp.form.step6.title')}</h3>
       </div>
 
       <div className="space-y-4">
-        <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1 text-center block">Qual o principal objetivo com esta cotação?</label>
+        <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1 text-center block">{t('cf.objective')}</label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { id: 'reduzir_custos', label: 'Reduzir Custos' },
-            { id: 'melhor_cobertura', label: 'Melhor Cobertura' },
-            { id: 'reter_talentos', label: 'Reter Talentos' }
+            { id: 'reduzir_custos', label: t('cf.reduceCosts') },
+            { id: 'melhor_cobertura', label: t('cf.betterCoverage') },
+            { id: 'reter_talentos', label: t('cf.retainTalent') }
           ].map(opt => (
             <label key={opt.id} className="cursor-pointer">
               <input type="radio" name="objetivo_principal" value={opt.id} checked={formData.objetivo_principal === opt.id} onChange={handleChange} className="peer sr-only" />
@@ -562,12 +564,12 @@ export function CorporateQuoteForm() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
         <div className="space-y-3">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Nível de Upgrade Desejado</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.upgradeLevel')}</label>
           <div className="flex flex-col gap-2">
             {[
-              { id: 'basico', label: 'Básico (Foco em preço)' },
-              { id: 'intermediario', label: 'Intermediário (Custo-benefício)' },
-              { id: 'premium', label: 'Premium (Alta cobertura e reembolso)' }
+              { id: 'basico', label: t('cf.basic') },
+              { id: 'intermediario', label: t('cf.intermediate') },
+              { id: 'premium', label: t('cf.premium') }
             ].map(opt => (
               <label key={opt.id} className="cursor-pointer">
                 <input type="radio" name="nivel_plano" value={opt.id} checked={formData.nivel_plano === opt.id} onChange={handleChange} className="peer sr-only" />
@@ -580,12 +582,12 @@ export function CorporateQuoteForm() {
         </div>
 
         <div className="space-y-3">
-          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Serviços Adicionais Desejados</label>
+          <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.additionalServices')}</label>
           <div className="flex flex-col gap-2">
             {[
-              { id: 'reembolso', label: 'Livre Escolha (Reembolso)' },
-              { id: 'concierge', label: 'Serviço de Concierge' },
-              { id: 'resgate_aereo', label: 'Resgate Aeromédico' }
+              { id: 'reembolso', label: t('cf.reimbursement') },
+              { id: 'concierge', label: t('cf.concierge') },
+              { id: 'resgate_aereo', label: t('cf.airRescue') }
             ].map(opt => {
               const isSelected = formData.servicos_adicionais.includes(opt.id);
               return (
@@ -609,14 +611,14 @@ export function CorporateQuoteForm() {
       </div>
 
       <div className="space-y-3 pt-4 border-t border-white/10">
-        <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Hospitais ou Laboratórios Mandatórios?</label>
-        <textarea name="hospitais_desejados" value={formData.hospitais_desejados} onChange={handleChange} rows={2} placeholder="Ex: Albert Einstein, Sírio Libanês, Fleury..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
+        <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('cf.hospitals')}</label>
+        <textarea name="hospitais_desejados" value={formData.hospitais_desejados} onChange={handleChange} rows={2} placeholder={t('cf.hospitals.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
       </div>
 
       <div className="pt-10 border-t border-white/10">
         <div className="flex items-center gap-3 mb-6">
           <Upload className="w-5 h-5 text-primary-500" />
-          <h4 className="text-sm font-black uppercase tracking-wider text-white">Documentos Opcionais</h4>
+          <h4 className="text-sm font-black uppercase tracking-wider text-white">{t('corp.form.upload.optional')}</h4>
         </div>
         
         <div 
@@ -624,8 +626,8 @@ export function CorporateQuoteForm() {
           className="p-10 border-2 border-dashed border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center text-center group hover:border-primary-500/50 transition-colors cursor-pointer bg-white/5"
         >
           <Upload className="w-10 h-10 text-neutral-500 group-hover:text-primary-500 transition-colors mb-4" />
-          <h4 className="text-sm font-bold mb-1">Upload de arquivo (Opcional)</h4>
-          <p className="text-xs text-neutral-500">Se você já possui uma planilha de vidas ou cotações anteriores, anexe aqui.</p>
+          <h4 className="text-sm font-bold mb-1">{t('corp.form.upload.title')}</h4>
+          <p className="text-xs text-neutral-500">{t('corp.form.upload.desc')}</p>
         </div>
 
         {/* Lista de arquivos específicos para este passo */}
@@ -659,11 +661,11 @@ export function CorporateQuoteForm() {
           <div className="w-10 h-10 bg-primary-500 text-neutral-900 rounded-xl flex items-center justify-center">
             <Zap className="w-5 h-5" />
           </div>
-          <h3 className="text-xl font-bold uppercase tracking-tight text-white">Atalho Rápido</h3>
+          <h3 className="text-xl font-bold uppercase tracking-tight text-white">{t('ind.form.quick')}</h3>
         </div>
 
         <p className="text-neutral-400 text-sm mb-8 leading-relaxed">
-          Não quer preencher o formulário agora? Sem problemas! Envie uma mensagem rápida ou anexe seus documentos e entraremos em contato.
+          {t('ind.form.quick.desc')}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -676,8 +678,8 @@ export function CorporateQuoteForm() {
               <MessageSquare className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1">Falar com Especialista</h4>
-              <p className="text-xs text-neutral-400">Solicite uma cotação pelo formulário de contato</p>
+              <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1">{t('ind.form.talk')}</h4>
+              <p className="text-xs text-neutral-400">{t('ind.form.talk.desc')}</p>
             </div>
             <ArrowRight className="w-5 h-5 text-primary-500 ml-auto group-hover:translate-x-1 transition-transform" />
           </a>
@@ -691,8 +693,8 @@ export function CorporateQuoteForm() {
               <Paperclip className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1">Enviar Arquivo</h4>
-              <p className="text-xs text-neutral-400">PDF, planilha ou qualquer documento</p>
+              <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1">{t('ind.form.upload')}</h4>
+              <p className="text-xs text-neutral-400">{t('ind.form.upload.desc')}</p>
             </div>
             <Upload className="w-5 h-5 text-neutral-500 ml-auto group-hover:text-primary-500 transition-colors" />
           </div>
@@ -709,7 +711,7 @@ export function CorporateQuoteForm() {
         {/* Lista de arquivos enviados */}
         {uploadedFiles.length > 0 && (
           <div className="mt-6 space-y-2">
-            <p className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest">Arquivos anexados:</p>
+            <p className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest">{t('ind.form.files')}</p>
             {uploadedFiles.map((file, index) => (
               <div key={index} className="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/10">
                 <FileText className="w-4 h-4 text-primary-500 shrink-0" />
@@ -754,7 +756,7 @@ export function CorporateQuoteForm() {
             onClick={handlePrev}
             className="px-6 py-4 rounded-full border border-white/20 text-white font-bold text-xs uppercase tracking-widest hover:bg-white/10 transition-colors flex items-center gap-2"
           >
-            <ArrowLeft className="w-4 h-4" /> Voltar
+            <ArrowLeft className="w-4 h-4" /> {t('form.back')}
           </button>
         ) : <div></div>}
 
@@ -765,7 +767,7 @@ export function CorporateQuoteForm() {
             onClick={handleNext}
             className="px-8 py-4 bg-white text-neutral-950 font-black rounded-full text-xs uppercase tracking-widest hover:bg-primary-500 transition-colors flex items-center gap-2"
           >
-            Próxima Etapa <ArrowRight className="w-4 h-4" />
+            {t('form.next')} <ArrowRight className="w-4 h-4" />
           </motion.button>
         ) : (
           <div className="flex flex-col items-end gap-4">
@@ -776,15 +778,15 @@ export function CorporateQuoteForm() {
               disabled={isSubmitting}
               className={`px-8 py-4 bg-primary-500 text-neutral-900 font-black rounded-full shadow-glow-primary text-xs uppercase tracking-widest flex items-center gap-2 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              {isSubmitting ? 'Enviando...' : 'Enviar para Estudo'}
+              {isSubmitting ? t('form.submitting') : t('form.submitStudy')}
               {!isSubmitting && <ArrowRight className="w-4 h-4" />}
             </motion.button>
             
             {submitStatus === 'success' && (
-              <p className="text-xs font-black text-primary-500 uppercase tracking-widest animate-pulse">✓ Enviado com sucesso! Entraremos em contato.</p>
+              <p className="text-xs font-black text-primary-500 uppercase tracking-widest animate-pulse">{t('form.successFull')}</p>
             )}
             {submitStatus === 'error' && (
-              <p className="text-xs font-black text-red-500 uppercase tracking-widest">× Erro ao enviar. Tente novamente.</p>
+              <p className="text-xs font-black text-red-500 uppercase tracking-widest">{t('form.error')}</p>
             )}
           </div>
         )}

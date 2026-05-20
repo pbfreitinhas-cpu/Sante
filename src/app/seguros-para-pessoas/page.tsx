@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck,
@@ -34,6 +35,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { TalkingMascot } from '@/components/MascotTip';
 import { supabase } from '@/lib/supabase';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 type FormData = {
   nome: string;
@@ -73,6 +75,7 @@ export default function SegurosParaPessoas() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const formRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
 
   const scrollToForm = () => {
@@ -150,10 +153,10 @@ export default function SegurosParaPessoas() {
       }
       setSubmitStatus('success');
       setUploadedFiles([]); // Clear files on success
-    } catch (err: any) {
+    } catch (err) {
       console.error('Unexpected Error:', err);
       setSubmitStatus('error');
-      alert(`Erro inesperado: ${err.message}`);
+      alert(`Erro inesperado: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -190,15 +193,15 @@ export default function SegurosParaPessoas() {
           >
             <div className="inline-flex items-center gap-2 bg-primary-100 border border-primary-200 px-4 py-2 rounded-full mb-8">
               <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
-              <p className="text-[0.7rem] font-black text-primary-700 tracking-widest uppercase">Seguros para Pessoas</p>
+              <p className="text-[0.7rem] font-black text-primary-700 tracking-widest uppercase">{t('ind.badge')}</p>
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] xl:text-[6rem] font-display font-black text-neutral-900 leading-[0.95] tracking-tighter mb-8">
-              Proteção completa para <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-500">você e sua família.</span>
+              {t('ind.title').split(' ').map((word, i) => i > 2 ? <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-500">{word} </span> : <React.Fragment key={i}>{word} </React.Fragment>)}
             </h1>
 
             <p className="text-lg md:text-xl text-neutral-600 font-medium mb-12 leading-relaxed max-w-xl">
-              Soluções personalizadas de saúde, vida e odontológico desenhadas para quem valoriza um cuidado elevado e tranquilidade em todos os momentos.
+              {t('ind.desc')}
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -208,7 +211,7 @@ export default function SegurosParaPessoas() {
                 whileTap={{ scale: 0.95 }}
                 className="px-10 py-5 bg-primary-500 text-neutral-900 font-black rounded-full shadow-glow-primary text-xs tracking-widest uppercase flex items-center gap-3"
               >
-                SOLICITAR COTAÇÃO
+                {t('ind.cta')}
                 <ArrowRight className="w-4 h-4" />
               </motion.button>
 
@@ -220,7 +223,7 @@ export default function SegurosParaPessoas() {
                     </div>
                   ))}
                 </div>
-                <span className="text-[0.65rem] font-bold text-neutral-500 uppercase tracking-widest">+2.500 Vidas Protegidas</span>
+                <span className="text-[0.65rem] font-bold text-neutral-500 uppercase tracking-widest">{t('ind.lives')}</span>
               </div>
             </div>
           </motion.div>
@@ -260,16 +263,16 @@ export default function SegurosParaPessoas() {
             <div className="w-16 h-16 bg-primary-100 rounded-[2rem] flex items-center justify-center mb-8 text-primary-600">
               <Stethoscope className="w-8 h-8" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">Plano de Saúde</h2>
+            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">{t('ind.health.title')}</h2>
             <p className="text-lg text-neutral-600 font-medium mb-10 leading-relaxed">
-              O cuidado que sua saúde merece, com acesso aos melhores hospitais e uma rede credenciada de excelência. Transparência e agilidade no atendimento.
+              {t('ind.health.desc')}
             </p>
 
             <ul className="space-y-6 mb-12">
               {[
-                'Cobertura médica completa e abrangente',
-                'Rede hospitalar de alta performance',
-                'Opções flexíveis com ou sem coparticipação'
+                t('ind.health.f1'),
+                t('ind.health.f2'),
+                t('ind.health.f3')
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-4 text-neutral-700 font-bold">
                   <CheckCircle className="w-6 h-6 text-accent-500 shrink-0" />
@@ -279,7 +282,7 @@ export default function SegurosParaPessoas() {
             </ul>
 
             <button onClick={scrollToForm} className="text-brand-blue-500 font-black text-[0.7rem] tracking-[0.2em] uppercase flex items-center gap-2 group">
-              COTAÇÃO RÁPIDA <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t('ind.health.cta')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -292,16 +295,16 @@ export default function SegurosParaPessoas() {
             <div className="w-16 h-16 bg-brand-blue-100 rounded-[2rem] flex items-center justify-center mb-8 text-brand-blue-600">
               <Heart className="w-8 h-8" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">Seguro de Vida</h2>
+            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">{t('ind.life.title')}</h2>
             <p className="text-lg text-neutral-600 font-medium mb-10 leading-relaxed">
-              Tranquilidade para quem você ama. Nosso seguro de vida oferece o suporte financeiro necessário para enfrentar imprevistos com segurança.
+              {t('ind.life.desc')}
             </p>
 
             <ul className="space-y-6 mb-12">
               {[
-                'Proteção financeira sólida para sua família',
-                'Cobertura completa em casos de imprevistos',
-                'Flexibilidade total na escolha de valores'
+                t('ind.life.f1'),
+                t('ind.life.f2'),
+                t('ind.life.f3')
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-4 text-neutral-700 font-bold">
                   <CheckCircle className="w-6 h-6 text-brand-blue-500 shrink-0" />
@@ -311,7 +314,7 @@ export default function SegurosParaPessoas() {
             </ul>
 
             <button onClick={scrollToForm} className="text-primary-600 font-black text-[0.7rem] tracking-[0.2em] uppercase flex items-center gap-2 group">
-              SIMULAR PROTEÇÃO <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t('ind.life.cta')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 
@@ -347,16 +350,16 @@ export default function SegurosParaPessoas() {
             <div className="w-16 h-16 bg-secondary-100 rounded-[2rem] flex items-center justify-center mb-8 text-secondary-600">
               <Activity className="w-8 h-8" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">Plano Odontológico</h2>
+            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">{t('ind.dental.title')}</h2>
             <p className="text-lg text-neutral-600 font-medium mb-10 leading-relaxed">
-              Um sorriso saudável é a porta de entrada para o bem-estar. Oferecemos planos com baixo custo e ampla rede credenciada.
+              {t('ind.dental.desc')}
             </p>
 
             <ul className="space-y-6 mb-12">
               {[
-                'Consultas, limpezas e procedimentos diversos',
-                'Rede credenciada em todo o território nacional',
-                'Excelente custo-benefício para você e dependentes'
+                t('ind.dental.f1'),
+                t('ind.dental.f2'),
+                t('ind.dental.f3')
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-4 text-neutral-700 font-bold">
                   <CheckCircle className="w-6 h-6 text-secondary-400 shrink-0" />
@@ -366,7 +369,7 @@ export default function SegurosParaPessoas() {
             </ul>
 
             <button onClick={scrollToForm} className="text-neutral-900 font-black text-[0.7rem] tracking-[0.2em] uppercase flex items-center gap-2 group">
-              COTAÇÃO RÁPIDA <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t('ind.dental.cta')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -384,14 +387,13 @@ export default function SegurosParaPessoas() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span>
-              <p className="text-[0.6rem] font-black text-primary-400 tracking-[0.2em] uppercase">Cotação Online</p>
+              <p className="text-[0.6rem] font-black text-primary-400 tracking-[0.2em] uppercase">{t('ind.form.badge')}</p>
             </div>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.1] mb-6">
-              Inicie sua jornada para um<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-brand-blue-400">cuidado elevado hoje.</span>
+              {t('ind.form.title').split(' ').map((word, i) => i > 3 ? <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-brand-blue-400">{word} </span> : <React.Fragment key={i}>{word} </React.Fragment>)}
             </h2>
             <p className="text-neutral-400 font-medium max-w-xl mx-auto">
-              Preencha os dados abaixo e receba uma análise personalizada dos nossos especialistas.
+              {t('ind.form.desc')}
             </p>
           </div>
 
@@ -404,16 +406,16 @@ export default function SegurosParaPessoas() {
                 <div className="w-10 h-10 bg-primary-500 text-neutral-900 rounded-xl flex items-center justify-center">
                   <Zap className="w-5 h-5" />
                 </div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">Atalho Rápido</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight">{t('ind.form.quick')}</h3>
               </div>
 
               <p className="text-neutral-400 text-sm mb-8 leading-relaxed">
-                Não quer preencher o formulário agora? Sem problemas! Envie uma mensagem rápida ou anexe seus documentos e entraremos em contato.
+                {t('ind.form.quick.desc')}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Botão contato rápido */}
-                <a
+                <Link
                   href="/?cotacao=true#contato"
                   className="group flex items-center gap-4 p-6 rounded-2xl border border-primary-500/30 bg-primary-500/10 hover:bg-primary-500/20 transition-all cursor-pointer"
                 >
@@ -421,11 +423,11 @@ export default function SegurosParaPessoas() {
                     <MessageSquare className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1">Falar com Especialista</h4>
-                    <p className="text-xs text-neutral-400">Solicite uma cotação pelo formulário de contato</p>
+                    <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1">{t('ind.form.talk')}</h4>
+                    <p className="text-xs text-neutral-400">{t('ind.form.talk.desc')}</p>
                   </div>
                   <ArrowRight className="w-5 h-5 text-primary-500 ml-auto group-hover:translate-x-1 transition-transform" />
-                </a>
+                </Link>
 
                 {/* Upload de arquivo */}
                 <div
@@ -436,8 +438,8 @@ export default function SegurosParaPessoas() {
                     <Paperclip className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1">Enviar Arquivo</h4>
-                    <p className="text-xs text-neutral-400">PDF, planilha ou qualquer documento</p>
+                    <h4 className="text-sm font-black uppercase tracking-wider text-white mb-1">{t('ind.form.upload')}</h4>
+                    <p className="text-xs text-neutral-400">{t('ind.form.upload.desc')}</p>
                   </div>
                   <Upload className="w-5 h-5 text-neutral-500 ml-auto group-hover:text-primary-500 transition-colors" />
                 </div>
@@ -454,7 +456,7 @@ export default function SegurosParaPessoas() {
               {/* Lista de arquivos enviados */}
               {uploadedFiles.length > 0 && (
                 <div className="mt-6 space-y-2">
-                  <p className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest">Arquivos anexados:</p>
+                  <p className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest">{t('pf.files')}</p>
                   {uploadedFiles.map((file, index) => (
                     <div key={index} className="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3 border border-white/10">
                       <FileText className="w-4 h-4 text-primary-500 shrink-0" />
@@ -477,25 +479,25 @@ export default function SegurosParaPessoas() {
             <div className="bg-white/5 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/10 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-primary-500 text-neutral-900 rounded-xl flex items-center justify-center font-black">1</div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">Dados de Contato</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight">{t('pf.step1')}</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Nome Completo</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.fullName')}</label>
                   <div className="relative group">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input name="nome" value={formData.nome} onChange={handleChange} required type="text" placeholder="Seu nome" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
+                    <input name="nome" value={formData.nome} onChange={handleChange} required type="text" placeholder={t('pf.fullName.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">E-mail</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.email')}</label>
                   <div className="relative group">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder="seu@email.com" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
+                    <input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder={t('pf.email.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
                   </div>
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">WhatsApp</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.whatsapp')}</label>
                   <div className="relative group">
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
                     <input name="whatsapp" value={formData.whatsapp} onChange={handleChange} required type="tel" placeholder="(11) 99999-9999" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 focus:ring-4 focus:ring-primary-500/5 transition-all text-sm" />
@@ -508,13 +510,13 @@ export default function SegurosParaPessoas() {
             <div className="bg-white/5 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/10 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-brand-blue-500 text-white rounded-xl flex items-center justify-center font-black">2</div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">O que você busca?</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight">{t('pf.step2')}</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  { id: 'saude', label: 'Plano de Saúde', icon: Stethoscope },
-                  { id: 'vida', label: 'Seguro de Vida', icon: Heart },
-                  { id: 'odonto', label: 'Plano Odontológico', icon: Activity }
+                  { id: 'saude', label: t('pf.healthPlan'), icon: Stethoscope },
+                  { id: 'vida', label: t('pf.lifeInsurance'), icon: Heart },
+                  { id: 'odonto', label: t('pf.dentalPlan'), icon: Activity }
                 ].map(opt => (
                   <label key={opt.id} className="relative cursor-pointer group">
                     <input
@@ -545,29 +547,29 @@ export default function SegurosParaPessoas() {
                     <div className="w-10 h-10 bg-primary-500 text-neutral-900 rounded-xl flex items-center justify-center font-black">
                       <Heart className="w-5 h-5" />
                     </div>
-                    <h3 className="text-xl font-bold uppercase tracking-tight">Detalhes Seguro de Vida</h3>
+                    <h3 className="text-xl font-bold uppercase tracking-tight">{t('pf.lifeDetails')}</h3>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Data de Nascimento</label>
+                      <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.dob')}</label>
                       <input name="data_nascimento" value={formData.data_nascimento} onChange={handleChange} type="date" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium outline-none focus:border-primary-500/50 transition-all text-sm [color-scheme:dark]" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Sexo</label>
+                      <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.sex')}</label>
                       <select name="sexo" value={formData.sexo} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm font-medium outline-none focus:border-primary-500 transition-all appearance-none">
-                        <option value="" className="bg-neutral-900">Selecione...</option>
-                        <option value="Masculino" className="bg-neutral-900">Masculino</option>
-                        <option value="Feminino" className="bg-neutral-900">Feminino</option>
+                        <option value="" className="bg-neutral-900">{t('pf.select')}</option>
+                        <option value="Masculino" className="bg-neutral-900">{t('pf.male')}</option>
+                        <option value="Feminino" className="bg-neutral-900">{t('pf.female')}</option>
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Ocupação</label>
-                      <input name="ocupacao" value={formData.ocupacao} onChange={handleChange} type="text" placeholder="Ex: Engenheiro, Médico..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
+                      <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.occupation')}</label>
+                      <input name="ocupacao" value={formData.ocupacao} onChange={handleChange} type="text" placeholder={t('pf.occupation.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Faixa de Renda</label>
+                      <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.income')}</label>
                       <select name="renda" value={formData.renda} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white text-sm font-medium outline-none focus:border-primary-500 transition-all appearance-none">
-                        <option value="" className="bg-neutral-900">Selecione...</option>
+                        <option value="" className="bg-neutral-900">{t('pf.select')}</option>
                         <option value="Até R$ 2.500,00" className="bg-neutral-900">Até R$ 2.500,00</option>
                         <option value="De R$ 2.500,01 até R$ 5.000,00" className="bg-neutral-900">De R$ 2.500,01 até R$ 5.000,00</option>
                         <option value="De R$ 5.000,01 até R$ 7.500,00" className="bg-neutral-900">De R$ 5.000,01 até R$ 7.500,00</option>
@@ -584,17 +586,17 @@ export default function SegurosParaPessoas() {
             <div className="bg-white/5 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/10 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-primary-500 text-neutral-900 rounded-xl flex items-center justify-center font-black">3</div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">Perfil da Contratação</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight">{t('pf.step3')}</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
                 <div className="space-y-4">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Tipo de Plano</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.planType')}</label>
                   <div className="grid grid-cols-3 gap-2">
-                    {['Individual', 'Familiar', 'MEI'].map(type => (
-                      <label key={type} className="cursor-pointer group">
-                        <input type="radio" name="tipo_plano" value={type} checked={formData.tipo_plano === type} onChange={handleChange} className="peer sr-only" />
+                    {[{v:'Individual',l:t('pf.individual')}, {v:'Familiar',l:t('pf.family')}, {v:'MEI',l:'MEI'}].map(type => (
+                      <label key={type.v} className="cursor-pointer group">
+                        <input type="radio" name="tipo_plano" value={type.v} checked={formData.tipo_plano === type.v} onChange={handleChange} className="peer sr-only" />
                         <div className="py-3 px-1 rounded-xl border border-white/10 bg-white/5 text-[0.6rem] font-black uppercase tracking-tighter text-center transition-all peer-checked:bg-white peer-checked:text-neutral-950">
-                          {type}
+                          {type.l}
                         </div>
                       </label>
                     ))}
@@ -602,15 +604,15 @@ export default function SegurosParaPessoas() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Localização</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.location')}</label>
                   <div className="relative group">
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <input name="localizacao" value={formData.localizacao} onChange={handleChange} type="text" placeholder="Cidade/Região" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
+                    <input name="localizacao" value={formData.localizacao} onChange={handleChange} type="text" placeholder={t('pf.location.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Quantidade de Vidas</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.lives')}</label>
                   <div className="relative group">
                     <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
                     <input name="vidas" value={formData.vidas} onChange={handleChange} type="number" placeholder="Ex: 5" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
@@ -618,7 +620,7 @@ export default function SegurosParaPessoas() {
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Idade das pessoas</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.ages')}</label>
                   <div className="relative group">
                     <Activity className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
                     <input name="idades" value={formData.idades} onChange={handleChange} type="text" placeholder="Ex: 25, 30, 2" className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm" />
@@ -631,45 +633,45 @@ export default function SegurosParaPessoas() {
             <div className="bg-white/5 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/10 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-brand-blue-500 text-white rounded-xl flex items-center justify-center font-black">4</div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">Preferências</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight">{t('pf.step4')}</h3>
               </div>
 
               <div className="space-y-10">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="space-y-3">
-                    <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Coparticipação</label>
+                    <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.copart')}</label>
                     <select name="coparticipacao" value={formData.coparticipacao} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
-                      <option className="bg-neutral-900">Indiferente</option>
-                      <option className="bg-neutral-900">Sim</option>
-                      <option className="bg-neutral-900">Não</option>
+                      <option className="bg-neutral-900">{t('pf.indifferent')}</option>
+                      <option className="bg-neutral-900">{t('pf.yes')}</option>
+                      <option className="bg-neutral-900">{t('pf.no')}</option>
                     </select>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Acomodação</label>
+                    <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.accommodation')}</label>
                     <select name="acomodacao" value={formData.acomodacao} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
-                      <option className="bg-neutral-900">Indiferente</option>
-                      <option className="bg-neutral-900">Apartamento</option>
-                      <option className="bg-neutral-900">Enfermaria</option>
+                      <option className="bg-neutral-900">{t('pf.indifferent')}</option>
+                      <option className="bg-neutral-900">{t('pf.apartment')}</option>
+                      <option className="bg-neutral-900">{t('pf.ward')}</option>
                     </select>
                   </div>
                   <div className="space-y-3">
-                    <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Abrangência</label>
+                    <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.coverage')}</label>
                     <select name="abrangencia" value={formData.abrangencia} onChange={handleChange} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white text-xs font-bold outline-none focus:border-primary-500 transition-all appearance-none">
-                      <option className="bg-neutral-900">Indiferente</option>
-                      <option className="bg-neutral-900">Regional</option>
-                      <option className="bg-neutral-900">Nacional</option>
-                      <option className="bg-neutral-900">Internacional</option>
+                      <option className="bg-neutral-900">{t('pf.indifferent')}</option>
+                      <option className="bg-neutral-900">{t('pf.regional')}</option>
+                      <option className="bg-neutral-900">{t('pf.national')}</option>
+                      <option className="bg-neutral-900">{t('pf.international')}</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <label className="text-[0.75rem] font-black text-primary-400 uppercase tracking-widest text-center block">O que é mais importante para você?</label>
+                  <label className="text-[0.75rem] font-black text-primary-400 uppercase tracking-widest text-center block">{t('pf.priority')}</label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
-                      'Mensalidade baixa',
-                      'Melhor rede hospitalar',
-                      'Custo x Qualidade'
+                      t('pf.lowCost'),
+                      t('pf.bestNetwork'),
+                      t('pf.costQuality')
                     ].map(prio => (
                       <label key={prio} className="cursor-pointer">
                         <input type="radio" name="prioridade" value={prio} checked={formData.prioridade === prio} onChange={handleChange} className="peer sr-only" />
@@ -682,10 +684,10 @@ export default function SegurosParaPessoas() {
                 </div>
 
                 <div className="space-y-3 pt-4">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Hospitais que não podem faltar</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.hospitals')}</label>
                   <div className="relative group">
                     <Building2 className="absolute left-4 top-4 w-4 h-4 text-neutral-500 group-focus-within:text-primary-500 transition-colors" />
-                    <textarea name="hospitais" value={formData.hospitais} onChange={handleChange} rows={2} placeholder="Ex: Albert Einstein, Sírio-Libanês, etc..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
+                    <textarea name="hospitais" value={formData.hospitais} onChange={handleChange} rows={2} placeholder={t('pf.hospitals.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
                   </div>
                 </div>
               </div>
@@ -695,30 +697,30 @@ export default function SegurosParaPessoas() {
             <div className="bg-white/5 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/10 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-primary-500 text-neutral-900 rounded-xl flex items-center justify-center font-black">5</div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">Necessidades</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight">{t('pf.step5')}</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Frequência de uso</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('pf.frequency')}</label>
                   <div className="flex gap-2">
-                    {['Baixa', 'Média', 'Alta'].map(u => (
-                      <label key={u} className="flex-1 cursor-pointer">
-                        <input type="radio" name="frequencia_uso" value={u} checked={formData.frequencia_uso === u} onChange={handleChange} className="peer sr-only" />
+                    {[{v:'Baixa',l:t('pf.low')},{v:'Média',l:t('pf.medium')},{v:'Alta',l:t('pf.high')}].map(u => (
+                      <label key={u.v} className="flex-1 cursor-pointer">
+                        <input type="radio" name="frequencia_uso" value={u.v} checked={formData.frequencia_uso === u.v} onChange={handleChange} className="peer sr-only" />
                         <div className="py-3 rounded-xl border border-white/10 bg-white/5 text-[0.6rem] font-black uppercase tracking-widest text-center peer-checked:border-primary-500 peer-checked:text-primary-500">
-                          {u}
+                          {u.l}
                         </div>
                       </label>
                     ))}
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">Coberturas desejadas</label>
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest">{t('pf.desiredCoverage')}</label>
                   <div className="flex flex-wrap gap-2">
-                    {['Terapia', 'Fisioterapia', 'Maternidade'].map(c => (
-                      <label key={c} className="cursor-pointer">
-                        <input type="checkbox" checked={formData.coberturas.includes(c)} onChange={() => toggleCobertura(c)} className="peer sr-only" />
+                    {[{v:'Terapia',l:t('pf.therapy')},{v:'Fisioterapia',l:t('pf.physio')},{v:'Maternidade',l:t('pf.maternity')}].map(c => (
+                      <label key={c.v} className="cursor-pointer">
+                        <input type="checkbox" checked={formData.coberturas.includes(c.v)} onChange={() => toggleCobertura(c.v)} className="peer sr-only" />
                         <div className="px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-[0.6rem] font-black uppercase tracking-widest peer-checked:bg-white/20">
-                          {c}
+                          {c.l}
                         </div>
                       </label>
                     ))}
@@ -731,7 +733,7 @@ export default function SegurosParaPessoas() {
             <div className="bg-white/5 backdrop-blur-xl p-8 md:p-10 rounded-[3rem] border border-white/10 shadow-2xl">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 bg-brand-blue-500 text-white rounded-xl flex items-center justify-center font-black">6</div>
-                <h3 className="text-xl font-bold uppercase tracking-tight">Finalizar</h3>
+                <h3 className="text-xl font-bold uppercase tracking-tight">{t('pf.step6')}</h3>
               </div>
 
               <div className="space-y-8">
@@ -740,14 +742,14 @@ export default function SegurosParaPessoas() {
                   className="p-10 border-2 border-dashed border-white/10 rounded-[2.5rem] flex flex-col items-center justify-center text-center group hover:border-primary-500/50 transition-colors cursor-pointer bg-white/5"
                 >
                   <Upload className="w-10 h-10 text-neutral-500 group-hover:text-primary-500 transition-colors mb-4" />
-                  <h4 className="text-sm font-bold mb-1">Upload de arquivo (Opcional)</h4>
-                  <p className="text-xs text-neutral-500">Se você for MEI ou possuir várias vidas, anexe um PDF ou Planilha.</p>
+                  <h4 className="text-sm font-bold mb-1">{t('pf.upload')}</h4>
+                  <p className="text-xs text-neutral-500">{t('pf.upload.desc')}</p>
                 </div>
 
                 {/* Lista de arquivos enviados no passo final */}
                 {uploadedFiles.length > 0 && (
                   <div className="mt-6 space-y-2 text-left w-full">
-                    <p className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest ml-1">Arquivos anexados:</p>
+                    <p className="text-[0.65rem] font-black text-primary-400 uppercase tracking-widest ml-1">{t('pf.files')}</p>
                     {uploadedFiles.map((file, index) => (
                       <div key={index} className="flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3 border border-white/5">
                         <FileText className="w-4 h-4 text-primary-500 shrink-0" />
@@ -765,8 +767,8 @@ export default function SegurosParaPessoas() {
                 )}
 
                 <div className="space-y-2">
-                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">Algo importante que devemos saber?</label>
-                  <textarea name="mensagem" value={formData.mensagem} onChange={handleChange} rows={3} placeholder="Sua mensagem..." className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
+                  <label className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest ml-1">{t('pf.importantNote')}</label>
+                  <textarea name="mensagem" value={formData.mensagem} onChange={handleChange} rows={3} placeholder={t('pf.importantNote.ph')} className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-white font-medium placeholder:text-neutral-600 outline-none focus:border-primary-500/50 transition-all text-sm resize-none" />
                 </div>
               </div>
             </div>
@@ -781,20 +783,20 @@ export default function SegurosParaPessoas() {
                 whileTap={!isSubmitting ? { scale: 0.98 } : {}}
                 className={`w-full py-8 bg-primary-500 text-neutral-950 font-black rounded-[2.5rem] shadow-glow-primary text-sm tracking-[0.3em] uppercase flex items-center justify-center gap-4 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                {isSubmitting ? 'Enviando...' : 'Enviar para análise'}
+                {isSubmitting ? t('form.submitting') : t('pf.submitAnalysis')}
                 {!isSubmitting && <ArrowRight className="w-5 h-5" />}
               </motion.button>
 
               {submitStatus === 'success' && (
-                <p className="text-center text-xs font-black text-primary-500 uppercase tracking-[0.2em] animate-pulse">✓ Enviado com sucesso! Entraremos em contato.</p>
+                <p className="text-center text-xs font-black text-primary-500 uppercase tracking-[0.2em] animate-pulse">{t('form.successFull')}</p>
               )}
               {submitStatus === 'error' && (
-                <p className="text-center text-xs font-black text-red-500 uppercase tracking-[0.2em]">× Erro ao enviar. Tente novamente.</p>
+                <p className="text-center text-xs font-black text-red-500 uppercase tracking-[0.2em]">{t('form.error')}</p>
               )}
             </div>
 
             <p className="text-center text-[0.6rem] font-bold text-neutral-500 uppercase tracking-[0.2em] pt-4">
-              Ao enviar, você concorda com nossa política de privacidade.
+              {t('form.privacy')}
             </p>
 
           </form>

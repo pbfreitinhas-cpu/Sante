@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Menu, X, Building2, User, Globe } from 'lucide-react';
+import { useTranslation } from '@/contexts/LanguageContext';
+import { LanguageSelector } from './LanguageSelector';
 
 export const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -10,6 +12,7 @@ export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -19,19 +22,29 @@ export const Header = () => {
 
   const solucoes = {
     empresa: {
-      title: 'Empresa',
+      title: t('nav.company'),
       icon: Building2,
-      items: ['Saúde', 'Vida', 'Odontológico']
+      items: [
+        { label: t('sol.health'), path: '/seguros-para-empresas' },
+        { label: t('sol.life'), path: '/#vida' },
+        { label: t('sol.dental'), path: '/#odontologico' }
+      ]
     },
     pessoa: {
-      title: 'Pessoa',
+      title: t('sol.person'),
       icon: User,
-      items: ['Saúde', 'Vida', 'Odontológico']
+      items: [
+        { label: t('sol.health'), path: '/seguros-para-pessoas' },
+        { label: t('sol.life'), path: '/#vida' },
+        { label: t('sol.dental'), path: '/#odontologico' }
+      ]
     },
     internacional: {
-      title: 'Internacional',
+      title: t('sol.international'),
       icon: Globe,
-      items: ['VUMI']
+      items: [
+        { label: 'VUMI', path: '/#internacional' }
+      ]
     }
   };
 
@@ -43,7 +56,7 @@ export const Header = () => {
         </a>
         
         <nav className="hidden lg:flex items-center gap-8 glass rounded-full px-10 py-3.5 text-[0.7rem] font-black tracking-widest uppercase text-neutral-500 shadow-soft transition-all hover:bg-white/95 relative">
-          <a href="/#sobre-nos" className="hover:text-primary-600 transition-colors">Sobre Nós</a>
+          <a href="/#sobre-nos" className="hover:text-primary-600 transition-colors">{t('nav.about')}</a>
           
           <div 
             className="relative group py-2"
@@ -54,7 +67,7 @@ export const Header = () => {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className="flex items-center gap-1 hover:text-primary-600 cursor-pointer transition-colors outline-none focus:text-primary-600"
             >
-              SOLUÇÕES <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+              {t('nav.solutions')} <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             <AnimatePresence>
@@ -76,11 +89,11 @@ export const Header = () => {
                         <div className="flex flex-col gap-1">
                           {section.items.map((item) => (
                             <a 
-                              key={item} 
-                              href={key === 'pessoa' ? '/seguros-para-pessoas' : key === 'empresa' ? '/seguros-para-empresas' : item === 'VUMI' ? '/#internacional' : `/#${item.toLowerCase()}`}
+                              key={item.label} 
+                              href={item.path}
                               className="text-[0.8rem] font-bold text-neutral-600 hover:text-brand-blue-600 hover:bg-brand-blue-50 px-3 py-2 rounded-xl transition-all normal-case tracking-normal"
                             >
-                              {item}
+                              {item.label}
                             </a>
                           ))}
                         </div>
@@ -94,10 +107,11 @@ export const Header = () => {
             </AnimatePresence>
           </div>
 
-          <a href="/#contato" className="hover:text-primary-600 transition-colors">Contato</a>
+          <a href="/#contato" className="hover:text-primary-600 transition-colors">{t('nav.contact')}</a>
         </nav>
 
         <div className="flex items-center gap-4 relative">
+          <LanguageSelector />
           <div 
             className="relative"
             onMouseEnter={() => setIsQuoteDropdownOpen(true)}
@@ -122,7 +136,7 @@ export const Header = () => {
               }}
               className="hidden sm:flex relative overflow-hidden bg-primary-500 text-neutral-900 font-bold text-[0.65rem] tracking-widest uppercase px-8 py-4 rounded-full cursor-pointer border-none outline-none z-10"
             >
-              <span className="relative z-10">Cotação Online</span>
+              <span className="relative z-10">{t('nav.quote')}</span>
               <motion.div 
                 className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-12 z-0"
                 animate={{ left: ["-100%", "200%"] }}
@@ -144,14 +158,14 @@ export const Header = () => {
                       className="flex items-center gap-3 text-[0.75rem] font-black text-neutral-800 hover:text-brand-blue-600 hover:bg-brand-blue-50 p-3 rounded-2xl transition-all uppercase tracking-widest"
                     >
                       <Building2 className="w-4 h-4" />
-                      Empresa
+                      {t('nav.company')}
                     </a>
                     <a 
                       href="/seguros-para-pessoas#cotacao" 
                       className="flex items-center gap-3 text-[0.75rem] font-black text-neutral-800 hover:text-brand-blue-600 hover:bg-brand-blue-50 p-3 rounded-2xl transition-all uppercase tracking-widest"
                     >
                       <User className="w-4 h-4" />
-                      Pessoas
+                      {t('nav.people')}
                     </a>
                   </div>
                 </motion.div>
@@ -194,14 +208,18 @@ export const Header = () => {
               </div>
 
               <nav className="flex flex-col gap-6">
-                <a href="/#sobre-nos" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-black text-neutral-950 tracking-tight">Sobre Nós</a>
+                <div className="flex items-center justify-between">
+                  <span className="text-[0.65rem] font-black tracking-widest text-neutral-400 uppercase">Idioma</span>
+                  <LanguageSelector />
+                </div>
+                <a href="/#sobre-nos" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-black text-neutral-950 tracking-tight">{t('nav.about')}</a>
                 
                 <div className="flex flex-col gap-4">
                   <button 
                     onClick={() => setMobileAccordion(mobileAccordion === 'solucoes' ? null : 'solucoes')}
                     className="text-lg font-black text-neutral-950 tracking-tight flex items-center justify-between w-full"
                   >
-                    SOLUÇÕES <ChevronDown className={`w-5 h-5 transition-transform ${mobileAccordion === 'solucoes' ? 'rotate-180' : ''}`} />
+                    {t('nav.solutions')} <ChevronDown className={`w-5 h-5 transition-transform ${mobileAccordion === 'solucoes' ? 'rotate-180' : ''}`} />
                   </button>
                   
                   <AnimatePresence>
@@ -218,12 +236,12 @@ export const Header = () => {
                             <div className="flex flex-col gap-2">
                               {section.items.map(item => (
                                 <a 
-                                  key={item} 
-                                  href={key === 'pessoa' ? '/seguros-para-pessoas' : key === 'empresa' ? '/seguros-para-empresas' : item === 'VUMI' ? '/#internacional' : `/#${item.toLowerCase()}`}
+                                  key={item.label} 
+                                  href={item.path}
                                   onClick={() => setIsMobileMenuOpen(false)} 
                                   className="text-sm font-bold text-neutral-700"
                                 >
-                                  {item}
+                                  {item.label}
                                 </a>
                               ))}
                             </div>
@@ -234,24 +252,24 @@ export const Header = () => {
                   </AnimatePresence>
                 </div>
 
-                <a href="/#contato" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-black text-neutral-950 tracking-tight">Contato</a>
+                <a href="/#contato" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-black text-neutral-950 tracking-tight">{t('nav.contact')}</a>
               </nav>
 
               <div className="mt-auto flex flex-col gap-3">
-                <p className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest text-center mb-1">Cotação Online</p>
+                <p className="text-[0.65rem] font-black text-neutral-400 uppercase tracking-widest text-center mb-1">{t('nav.quote')}</p>
                 <a 
                   href="/seguros-para-empresas#cotacao"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="w-full bg-neutral-900 py-4 rounded-2xl font-black text-primary-500 text-xs tracking-widest uppercase text-center border border-neutral-800"
                 >
-                  Para Empresa
+                  {t('nav.forCompany')}
                 </a>
                 <a 
                   href="/seguros-para-pessoas#cotacao"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="w-full bg-primary-500 py-4 rounded-2xl font-black text-neutral-900 text-xs tracking-widest uppercase text-center"
                 >
-                  Para Você
+                  {t('nav.forYou')}
                 </a>
               </div>
             </motion.div>

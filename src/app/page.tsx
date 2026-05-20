@@ -9,6 +9,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { supabase } from '@/lib/supabase';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 const testimonials = [
   {
@@ -40,7 +41,17 @@ const testimonials = [
   }
 ];
 
-const TestimonialCard = ({ data, index }: { data: any, index: number }) => {
+interface Testimonial {
+  id: number;
+  name: string;
+  role: string;
+  text: string;
+  avatar: string;
+  featured: boolean;
+  direction: string;
+}
+
+const TestimonialCard = ({ data }: { data: Testimonial }) => {
   const [expanded, setExpanded] = useState(false);
   const isLong = data.text.length > 150;
   const ref = useRef(null);
@@ -81,7 +92,7 @@ const TestimonialCard = ({ data, index }: { data: any, index: number }) => {
 
       <div className={`relative flex-1 z-10 ${data.featured ? 'text-brand-blue-50' : 'text-neutral-600'}`}>
         <p className={`text-sm leading-relaxed font-medium ${!expanded && isLong ? 'line-clamp-4' : ''}`}>
-          "{data.text}"
+          &quot;{data.text}&quot;
         </p>
         {isLong && (
           <button 
@@ -129,6 +140,7 @@ export default function Home() {
   const [solicitacao, setSolicitacao] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const { t } = useTranslation();
 
   const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -154,10 +166,10 @@ export default function Home() {
       setSubmitStatus('success');
       setSolicitacao('');
       (e.target as HTMLFormElement).reset();
-    } catch (err: any) {
+    } catch (err) {
       console.error('Unexpected Error:', err);
       setSubmitStatus('error');
-      alert(`Erro inesperado: ${err.message}`);
+      alert(`Erro inesperado: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -208,7 +220,7 @@ export default function Home() {
 
             <div className="text-center w-full max-w-md mx-auto">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black text-neutral-950 mb-6 leading-[1.1] tracking-tight">
-                Seguros para<br/>Empresas
+                {t('hero.title.business').split(' ').map((word, i) => i === 2 ? <React.Fragment key={i}><br/>{word}</React.Fragment> : <React.Fragment key={i}>{word} </React.Fragment>)}
               </h1>
               <div className="min-h-[6rem] flex flex-col items-center justify-start"> {/* Flexible height */}
                 <AnimatePresence mode="wait">
@@ -219,13 +231,13 @@ export default function Home() {
                       exit={{ opacity: 0, y: -10 }}
                       className="text-neutral-900 text-sm md:text-base font-medium mb-8 max-w-xs mx-auto"
                     >
-                      Consultoria personalizada para o seu negócio, com inovação e inteligência cibernética.
+                      {t('hero.desc.business')}
                     </motion.p>
                   )}
                 </AnimatePresence>
               </div>
               <a href="/seguros-para-empresas" className="px-10 py-4 bg-brand-blue text-white font-bold rounded-full hover:scale-105 transition-transform shadow-xl text-xs tracking-widest uppercase inline-block">
-                SABER MAIS
+                {t('hero.learnMore')}
               </a>
             </div>
           </div>
@@ -247,7 +259,7 @@ export default function Home() {
 
             <div className="text-center w-full max-w-md mx-auto">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black text-neutral-950 mb-6 leading-[1.1] tracking-tight">
-                Seguros para<br/>Pessoas
+                {t('hero.title.people').split(' ').map((word, i) => i === 2 ? <React.Fragment key={i}><br/>{word}</React.Fragment> : <React.Fragment key={i}>{word} </React.Fragment>)}
               </h1>
               <div className="min-h-[6rem] flex flex-col items-center justify-start"> {/* Flexible height */}
                 <AnimatePresence mode="wait">
@@ -258,13 +270,13 @@ export default function Home() {
                       exit={{ opacity: 0, y: -10 }}
                       className="text-neutral-700 text-sm md:text-base font-medium mb-8 max-w-xs mx-auto"
                     >
-                      Proteção completa para você e sua família, com foco em cuidado elevado e tranquilidade.
+                      {t('hero.desc.people')}
                     </motion.p>
                   )}
                 </AnimatePresence>
               </div>
                 <a href="/seguros-para-pessoas" className="px-10 py-4 bg-brand-blue text-white font-bold rounded-full hover:scale-105 transition-transform shadow-xl text-xs tracking-widest uppercase inline-block">
-                SABER MAIS
+                {t('hero.learnMore')}
               </a>
             </div>
           </div>
@@ -306,21 +318,20 @@ export default function Home() {
           </motion.div>
           <div className="flex flex-col">
             <div className="bg-primary-100/50 border border-primary-200 px-5 py-2 rounded-full w-max mb-8 mx-auto lg:mx-0">
-              <p className="text-[0.65rem] font-bold text-primary-700 tracking-[0.2em] uppercase">SOBRE NÓS</p>
+              <p className="text-[0.65rem] font-bold text-primary-700 tracking-[0.2em] uppercase">{t('about.badge')}</p>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black text-neutral-900 mb-8 leading-[1.1] tracking-tight text-center lg:text-left">
-              Sua saúde merece um<br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-brand-blue-400 to-brand-blue-600 animate-pulse-slow">cuidado elevado.</span>
+              {t('about.title').split(' ').map((word, i) => word === 'elevado.' ? <React.Fragment key={i}><br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-brand-blue-400 to-brand-blue-600 animate-pulse-slow">{word}</span></React.Fragment> : <React.Fragment key={i}>{word} </React.Fragment>)}
             </h2>
             <p className="text-lg text-neutral-500 font-medium mb-12 leading-relaxed max-w-xl text-center lg:text-left mx-auto lg:mx-0">
-              A Sante é uma corretora de alta performance, entregando as melhores soluções em Seguro Saúde, Vida e Planos Internacionais com foco total em proteção e inovação há 20 anos.
+              {t('about.desc')}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { icon: MapPin, title: 'Regional', text: 'Melhores opções locais.', color: 'bg-primary-500', iconColor: 'text-neutral-950' },
-                { icon: Map, title: 'Nacional', text: 'Cobertura em todo o país.', color: 'bg-brand-blue-500', iconColor: 'text-white' },
-                { icon: Globe2, title: 'Global', text: 'Atendimento pelo mundo.', color: 'bg-neutral-900', iconColor: 'text-primary-500' },
+                { icon: MapPin, title: t('about.regional'), text: t('about.regional.desc'), color: 'bg-primary-500', iconColor: 'text-neutral-950' },
+                { icon: Map, title: t('about.national'), text: t('about.national.desc'), color: 'bg-brand-blue-500', iconColor: 'text-white' },
+                { icon: Globe2, title: t('about.global'), text: t('about.global.desc'), color: 'bg-neutral-900', iconColor: 'text-primary-500' },
               ].map((item, i) => (
                 <div key={i} className="p-8 bg-white rounded-[2rem] border border-neutral-100/50 shadow-soft hover:shadow-xl hover:-translate-y-2 transition-all group">
                   <div className={`w-12 h-12 ${item.color} rounded-2xl flex items-center justify-center mb-6 ${item.iconColor} group-hover:scale-110 transition-transform`}>
@@ -338,8 +349,8 @@ export default function Home() {
       {/* 3. LOGO CLOUD / PARTNERS */}
       <section className="bg-white py-32 px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto text-center mb-16">
-          <p className="text-primary-600 font-bold tracking-widest text-xs uppercase mb-2">Rede de Excelência</p>
-          <h2 className="text-3xl md:text-5xl font-black text-neutral-900 tracking-tight">Seguradoras Parceiras</h2>
+          <p className="text-primary-600 font-bold tracking-widest text-xs uppercase mb-2">{t('partners.badge')}</p>
+          <h2 className="text-3xl md:text-5xl font-black text-neutral-900 tracking-tight">{t('partners.title')}</h2>
         </div>
         <div className="relative flex overflow-hidden group">
           <div className="flex animate-marquee group-hover:[animation-play-state:paused] gap-8 md:gap-12 whitespace-nowrap">
@@ -374,16 +385,15 @@ export default function Home() {
             >
               <div className="inline-flex items-center gap-3 bg-primary-500/10 border border-primary-500/20 px-5 py-2 rounded-full w-max mb-8">
                 <Globe2 className="w-4 h-4 text-primary-500" />
-                <p className="text-[0.65rem] font-black text-primary-500 tracking-[0.2em] uppercase">Alcance Global</p>
+                <p className="text-[0.65rem] font-black text-primary-500 tracking-[0.2em] uppercase">{t('international.badge')}</p>
               </div>
 
               <h2 className="text-5xl md:text-7xl font-black text-white mb-8 leading-[1] tracking-tight">
-                Sua proteção não <br/>
-                <span className="text-primary-500 italic">conhece fronteiras.</span>
+                {t('international.title').split(' ').map((word, i) => i === 3 ? <React.Fragment key={i}><br/><span className="text-primary-500 italic">{word}</span></React.Fragment> : <React.Fragment key={i}>{word} </React.Fragment>)}
               </h2>
 
               <p className="text-xl text-brand-blue-100 font-medium mb-12 leading-relaxed max-w-xl">
-                O cuidado Sante ultrapassa limites geográficos. Com a nossa solução <span className="text-white font-bold">VUMI Internacional</span>, garantimos acesso aos centros médicos mais prestigiados do mundo.
+                {t('international.desc')}
               </p>
 
               <div className="flex flex-wrap gap-6 items-center">
@@ -392,7 +402,7 @@ export default function Home() {
                   download 
                   className="px-10 py-5 bg-primary-500 hover:bg-white text-neutral-950 font-black rounded-full transition-all duration-300 shadow-glow-primary hover:scale-[1.03] flex items-center gap-3 text-xs tracking-widest uppercase group"
                 >
-                  Explorar VUMI
+                  {t('international.cta')}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </a>
                 <div className="flex -space-x-3 items-center">
@@ -401,17 +411,17 @@ export default function Home() {
                        <img src={`https://i.pravatar.cc/100?u=${i+10}`} alt="User" />
                     </div>
                   ))}
-                  <div className="pl-6 text-[0.65rem] font-bold text-brand-blue-300 uppercase tracking-widest">+500 Famílias Protegidas</div>
+                  <div className="pl-6 text-[0.65rem] font-bold text-brand-blue-300 uppercase tracking-widest">{t('international.families')}</div>
                 </div>
               </div>
 
               {/* Differential Pills */}
               <div className="mt-16 grid grid-cols-2 gap-4">
                  <div className="flex items-center gap-3 text-white border-l-2 border-primary-500 pl-4 py-1">
-                    <span className="text-xs font-black tracking-widest uppercase">Segunda Opinião Médica</span>
+                    <span className="text-xs font-black tracking-widest uppercase">{t('international.feature1')}</span>
                  </div>
                  <div className="flex items-center gap-3 text-white border-l-2 border-primary-500 pl-4 py-1">
-                    <span className="text-xs font-black tracking-widest uppercase">Livre Escolha Mundial</span>
+                    <span className="text-xs font-black tracking-widest uppercase">{t('international.feature2')}</span>
                  </div>
               </div>
             </motion.div>
@@ -464,20 +474,19 @@ export default function Home() {
           <div className="text-center mb-16 md:mb-24">
             <div className="inline-flex items-center gap-2 bg-primary-100 px-3 py-1 rounded-full mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span>
-              <p className="text-[0.6rem] font-black text-primary-700 tracking-[0.2em] uppercase">Depoimentos</p>
+              <p className="text-[0.6rem] font-black text-primary-700 tracking-[0.2em] uppercase">{t('testimonials.badge')}</p>
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-neutral-900 tracking-tight leading-[1.1] mb-6">
-              A confiança de quem<br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-600">vive a diferença.</span>
+              {t('testimonials.title').split(' ').map((word, i) => i > 3 ? <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-600">{word} </span> : <React.Fragment key={i}>{word} </React.Fragment>)}
             </h2>
             <p className="text-lg text-neutral-500 font-medium max-w-2xl mx-auto">
-              Nossa maior recompensa é a tranquilidade dos nossos clientes. Veja o que dizem sobre o cuidado e a performance da Sante.
+              {t('testimonials.desc')}
             </p>
           </div>
 
           <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 items-stretch">
-            {testimonials.map((test, index) => (
-              <TestimonialCard key={test.id} data={test} index={index} />
+            {testimonials.map((test) => (
+              <TestimonialCard key={test.id} data={test} />
             ))}
           </div>
         </div>
@@ -521,61 +530,61 @@ export default function Home() {
                 <div className="text-center lg:text-left mb-8">
                   <div className="inline-flex items-center gap-2 bg-primary-100 px-3 py-1 rounded-full mb-6">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span>
-                    <p className="text-[0.6rem] font-black text-primary-700 tracking-[0.2em] uppercase">Contato Prioritário</p>
+                    <p className="text-[0.6rem] font-black text-primary-700 tracking-[0.2em] uppercase">{t('contact.badge')}</p>
                   </div>
                   <h2 className="text-3xl md:text-4xl font-black text-neutral-900 font-display tracking-tight leading-[1.1] mb-4">
-                    Fale com um<br/>especialista <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-600">agora.</span>
+                    {t('contact.title').split(' ').map((word, i) => i > 2 ? <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-600">{word} </span> : <React.Fragment key={i}>{word} </React.Fragment>)}
                   </h2>
-                  <p className="text-xs text-neutral-500 font-medium tracking-tight">Especialistas prontos para te atender.</p>
+                  <p className="text-xs text-neutral-500 font-medium tracking-tight">{t('contact.desc')}</p>
                 </div>
                 
                 <form className="flex flex-col gap-5" onSubmit={handleContactSubmit}>
                   <div className="space-y-1.5">
-                    <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">Nome completo</label>
+                    <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">{t('form.name')}</label>
                     <div className="relative group">
                       <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-blue-500 transition-colors" />
                       <input 
                         name="nome"
                         required
                         type="text" 
-                        placeholder="Como te chamamos?" 
+                        placeholder={t('form.name.placeholder')} 
                         className="w-full bg-white border border-neutral-200 rounded-2xl py-4 pl-12 pr-6 text-neutral-900 font-bold placeholder:text-neutral-400 outline-none focus:ring-4 focus:ring-brand-blue-500/10 focus:border-brand-blue-500 transition-all text-xs" 
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">e-mail corporativo</label>
+                    <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">{t('form.email')}</label>
                     <div className="relative group">
                       <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-blue-500 transition-colors" />
                       <input 
                         name="email"
                         required
                         type="email" 
-                        placeholder="contato@sante.com.br" 
+                        placeholder={t('form.email.placeholder')} 
                         className="w-full bg-white border border-neutral-200 rounded-2xl py-4 pl-12 pr-6 text-neutral-900 font-bold placeholder:text-neutral-300 outline-none focus:ring-4 focus:ring-brand-blue-500/10 focus:border-brand-blue-500 transition-all text-xs" 
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">WhatsApp / Celular</label>
+                    <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">{t('form.whatsapp')}</label>
                     <div className="relative group">
                       <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 group-focus-within:text-brand-blue-500 transition-colors" />
                       <input 
                         name="whatsapp"
                         required
                         type="tel" 
-                        placeholder="(11) 99999-9999" 
+                        placeholder={t('form.whatsapp.placeholder')} 
                         className="w-full bg-white border border-neutral-200 rounded-2xl py-4 pl-12 pr-6 text-neutral-900 font-bold placeholder:text-neutral-300 outline-none focus:ring-4 focus:ring-brand-blue-500/10 focus:border-brand-blue-500 transition-all text-xs" 
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">sua solicitação</label>
+                    <label className="text-[0.6rem] font-bold text-neutral-700 uppercase tracking-widest ml-4">{t('form.message')}</label>
                     <textarea 
-                      placeholder="Fale um pouco sobre o que você busca..." 
+                      placeholder={t('form.message.placeholder')} 
                       rows={2}
                       required
                       value={solicitacao}
@@ -588,17 +597,20 @@ export default function Home() {
                     disabled={isSubmitting}
                     className={`w-full py-5 mt-2 bg-gradient-to-r from-brand-blue-600 to-primary-500 text-white font-black rounded-2xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-2 group ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    {isSubmitting ? 'Enviando...' : 'Enviar Proposta'}
+                    {isSubmitting ? t('form.submitting') : t('form.submit')}
                     {!isSubmitting && <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />}
                   </button>
 
                   {submitStatus === 'success' && (
-                    <p className="text-center text-xs font-bold text-green-600 uppercase tracking-widest mt-2 animate-bounce">✓ Enviado com sucesso!</p>
+                    <p className="text-center text-xs font-bold text-green-600 uppercase tracking-widest mt-2 animate-bounce">{t('form.success')}</p>
                   )}
                   {submitStatus === 'error' && (
-                    <p className="text-center text-xs font-bold text-red-600 uppercase tracking-widest mt-2">× Erro ao enviar. Tente novamente.</p>
+                    <p className="text-center text-xs font-bold text-red-600 uppercase tracking-widest mt-2">{t('form.error')}</p>
                   )}
                 </form>
+                <p className="text-center text-[0.6rem] font-bold text-neutral-500 uppercase tracking-[0.2em] pt-4">
+                  {t('form.privacy')}
+                </p>
                 
                 <div className="mt-8 pt-6 border-t border-neutral-100/50 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-3">

@@ -17,20 +17,23 @@ const LinkedinIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect width="4" height="12" x="2" y="9"></rect><circle cx="4" cy="4" r="2"></circle></svg>
 );
 
+import { useTranslation } from '@/contexts/LanguageContext';
+
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   const footerLinks = {
     solucoes: [
-      { name: 'Seguros para Empresas', href: '/seguros-para-empresas' },
-      { name: 'Seguros para Pessoas', href: '/seguros-para-pessoas' },
-      { name: 'Planos Internacionais', href: '/#internacional' },
-      { name: 'Consultoria de Saúde', href: '#' }
+      { name: t('nav.forCompany'), href: '/seguros-para-empresas' },
+      { name: t('nav.forYou'), href: '/seguros-para-pessoas' },
+      { name: t('sol.international'), href: '/#internacional' },
+      { name: t('nav.about'), href: '/#sobre-nos' }
     ],
     institucional: [
-      { name: 'Sobre a Sante', href: '/#sobre-nos' },
-      { name: 'Depoimentos', href: '/#depoimentos' },
-      { name: 'Contato', href: '/#contato' }
+      { name: t('nav.about'), href: '/#sobre-nos' },
+      { name: t('testimonials.badge'), href: '/#depoimentos' },
+      { name: t('nav.contact'), href: '/#contato' }
     ],
     contato: [
       { icon: Phone, text: '(11) 91330-1536', label: 'WhatsApp' },
@@ -54,7 +57,7 @@ export const Footer = () => {
               className="h-12 w-fit grayscale hover:grayscale-0 transition-all duration-500"
             />
             <p className="text-neutral-500 text-sm font-medium leading-relaxed max-w-xs">
-              Especialistas em proteção elevada. Oferecemos soluções inteligentes em seguros saúde, vida e planos internacionais com foco em excelência e cuidado.
+              {t('footer.desc')}
             </p>
             <div className="flex items-center gap-4">
               {[
@@ -75,7 +78,7 @@ export const Footer = () => {
 
           {/* Column 2: Solutions */}
           <div>
-            <h4 className="text-[0.7rem] font-black text-neutral-900 uppercase tracking-[0.2em] mb-8">Nossas Soluções</h4>
+            <h4 className="text-[0.7rem] font-black text-neutral-900 uppercase tracking-[0.2em] mb-8">{t('footer.solutions')}</h4>
             <ul className="space-y-4">
               {footerLinks.solucoes.map((link, i) => (
                 <li key={i}>
@@ -90,7 +93,7 @@ export const Footer = () => {
 
           {/* Column 3: Institutional */}
           <div>
-            <h4 className="text-[0.7rem] font-black text-neutral-900 uppercase tracking-[0.2em] mb-8">Institucional</h4>
+            <h4 className="text-[0.7rem] font-black text-neutral-900 uppercase tracking-[0.2em] mb-8">{t('footer.institutional')}</h4>
             <ul className="space-y-4">
               {footerLinks.institucional.map((link, i) => (
                 <li key={i}>
@@ -104,7 +107,7 @@ export const Footer = () => {
 
           {/* Column 4: Contact */}
           <div>
-            <h4 className="text-[0.7rem] font-black text-neutral-900 uppercase tracking-[0.2em] mb-8">Fale Conosco</h4>
+            <h4 className="text-[0.7rem] font-black text-neutral-900 uppercase tracking-[0.2em] mb-8">{t('footer.contact')}</h4>
             <ul className="space-y-6">
               {footerLinks.contato.map((item, i) => (
                 <li key={i} className="flex gap-4">
@@ -129,12 +132,12 @@ export const Footer = () => {
               © {currentYear} Sante Corretora de Seguros
             </p>
             <div className="flex items-center gap-6">
-              <a href="#" className="text-neutral-400 text-[0.6rem] font-bold uppercase tracking-widest hover:text-neutral-900 transition-colors">Privacidade</a>
-              <a href="#" className="text-neutral-400 text-[0.6rem] font-bold uppercase tracking-widest hover:text-neutral-900 transition-colors">Termos</a>
+              <a href="#" className="text-neutral-400 text-[0.6rem] font-bold uppercase tracking-widest hover:text-neutral-900 transition-colors">{t('footer.privacy')}</a>
+              <a href="#" className="text-neutral-400 text-[0.6rem] font-bold uppercase tracking-widest hover:text-neutral-900 transition-colors">{t('footer.terms')}</a>
             </div>
           </div>
           <p className="text-neutral-300 text-[0.6rem] font-bold uppercase tracking-[0.3em]">
-            Elevando o cuidado com inovação
+            {t('footer.tagline')}
           </p>
         </div>
       </div>

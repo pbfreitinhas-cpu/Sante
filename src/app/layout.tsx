@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 export default function RootLayout({
   children,
@@ -32,8 +33,10 @@ export default function RootLayout({
       className={`${outfit.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-body">
-        {children}
-        <FloatingWhatsApp />
+        <LanguageProvider>
+          {children}
+          <FloatingWhatsApp />
+        </LanguageProvider>
       </body>
     </html>
   );

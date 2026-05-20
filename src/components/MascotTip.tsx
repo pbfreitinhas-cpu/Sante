@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 /* ============================================================
    TalkingMascot — Grouped mascot and cloud for the left corner
@@ -175,8 +176,11 @@ interface MascotCloudProps {
 }
 
 export function MascotCloud({
-  message = "Preencha o quanto quiser — quanto mais informações, mais precisa e personalizada será sua cotação"
+  message
 }: MascotCloudProps) {
+  const { t } = useTranslation();
+  const displayMessage = message || t('mascot.defaultMessage');
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16, scale: 0.95 }}
@@ -239,9 +243,9 @@ export function MascotCloud({
               <span className="mascot-cloud-dot dot-delay-1" />
               <span className="mascot-cloud-dot dot-delay-2" />
             </div>
-            <span className="mascot-cloud-label">DICA DO SANTÊ</span>
+            <span className="mascot-cloud-label">{t('mascot.label')}</span>
           </div>
-          <p className="mascot-cloud-message">{message}</p>
+          <p className="mascot-cloud-message">{displayMessage}</p>
         </div>
       </div>
 

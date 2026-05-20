@@ -34,10 +34,12 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { CorporateQuoteForm } from '@/components/CorporateQuoteForm';
 import { TalkingMascot } from '@/components/MascotTip';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 export default function SegurosParaEmpresas() {
   const formRef = useRef<HTMLDivElement>(null);
   const [selectedInsurances, setSelectedInsurances] = useState<string[]>([]);
+  const { t } = useTranslation();
 
   const scrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -70,15 +72,15 @@ export default function SegurosParaEmpresas() {
           >
             <div className="inline-flex items-center gap-2 bg-primary-100 border border-primary-200 px-4 py-2 rounded-full mb-8">
               <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
-              <p className="text-[0.7rem] font-black text-primary-700 tracking-widest uppercase">Seguros para Empresas</p>
+              <p className="text-[0.7rem] font-black text-primary-700 tracking-widest uppercase">{t('corp.badge')}</p>
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] xl:text-[6rem] font-display font-black text-neutral-900 leading-[0.95] tracking-tighter mb-8">
-              Proteção estratégica para o seu <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-500">maior patrimônio.</span>
+              {t('corp.title').split(' ').map((word, i) => i > 3 ? <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-brand-blue-500">{word} </span> : <React.Fragment key={i}>{word} </React.Fragment>)}
             </h1>
 
             <p className="text-lg md:text-xl text-neutral-600 font-medium mb-12 leading-relaxed max-w-xl">
-              Consultoria personalizada e soluções robustas de saúde e proteção, desenhadas para empresas que buscam excelência e valorização do capital humano.
+              {t('corp.desc')}
             </p>
 
             <div className="flex flex-wrap gap-4">
@@ -88,7 +90,7 @@ export default function SegurosParaEmpresas() {
                 whileTap={{ scale: 0.95 }}
                 className="px-10 py-5 bg-primary-500 text-neutral-900 font-black rounded-full shadow-glow-primary text-xs tracking-widest uppercase flex items-center gap-3"
               >
-                SOLICITAR COTAÇÃO
+                {t('corp.cta')}
                 <ArrowRight className="w-4 h-4" />
               </motion.button>
 
@@ -100,7 +102,7 @@ export default function SegurosParaEmpresas() {
                     </div>
                   ))}
                 </div>
-                <span className="text-[0.65rem] font-bold text-neutral-500 uppercase tracking-widest">+150 Empresas Parceiras</span>
+                <span className="text-[0.65rem] font-bold text-neutral-500 uppercase tracking-widest">{t('corp.partners')}</span>
               </div>
             </div>
           </motion.div>
@@ -140,16 +142,16 @@ export default function SegurosParaEmpresas() {
             <div className="w-16 h-16 bg-primary-100 rounded-[2rem] flex items-center justify-center mb-8 text-primary-600">
               <Stethoscope className="w-8 h-8" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">Saúde Empresarial</h2>
+            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">{t('corp.health.title')}</h2>
             <p className="text-lg text-neutral-600 font-medium mb-10 leading-relaxed">
-              O benefício mais valorizado pelos colaboradores. Oferecemos gestão eficiente, redução de custos e acesso às melhores redes hospitalares para sua equipe.
+              {t('corp.health.desc')}
             </p>
 
             <ul className="space-y-6 mb-12">
               {[
-                'Gestão de sinistralidade e BI para empresas',
-                'Rede referenciada premium e atendimento exclusivo',
-                'Modelos flexíveis com ou sem coparticipação'
+                t('corp.health.f1'),
+                t('corp.health.f2'),
+                t('corp.health.f3')
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-4 text-neutral-700 font-bold">
                   <CheckCircle className="w-6 h-6 text-primary-500 shrink-0" />
@@ -159,7 +161,7 @@ export default function SegurosParaEmpresas() {
             </ul>
 
             <button onClick={scrollToForm} className="text-brand-blue-500 font-black text-[0.7rem] tracking-[0.2em] uppercase flex items-center gap-2 group">
-              ANALISAR MEU PLANO <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t('corp.health.cta')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -172,16 +174,16 @@ export default function SegurosParaEmpresas() {
             <div className="w-16 h-16 bg-brand-blue-100 rounded-[2rem] flex items-center justify-center mb-8 text-brand-blue-600">
               <Heart className="w-8 h-8" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">Vida em Grupo</h2>
+            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">{t('corp.life.title')}</h2>
             <p className="text-lg text-neutral-600 font-medium mb-10 leading-relaxed">
-              Segurança para seus colaboradores e conformidade para sua empresa. Planos flexíveis que atendem convenções coletivas e protegem o futuro das famílias.
+              {t('corp.life.desc')}
             </p>
 
             <ul className="space-y-6 mb-12">
               {[
-                'Atendimento a convenções coletivas (CCT)',
-                'Proteção financeira para colaboradores e sócios',
-                'Assistências exclusivas e contratação simplificada'
+                t('corp.life.f1'),
+                t('corp.life.f2'),
+                t('corp.life.f3')
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-4 text-neutral-700 font-bold">
                   <CheckCircle className="w-6 h-6 text-brand-blue-500 shrink-0" />
@@ -191,7 +193,7 @@ export default function SegurosParaEmpresas() {
             </ul>
 
             <button onClick={scrollToForm} className="text-primary-600 font-black text-[0.7rem] tracking-[0.2em] uppercase flex items-center gap-2 group">
-              SIMULAR BENEFÍCIO <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t('corp.life.cta')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
 
@@ -227,16 +229,16 @@ export default function SegurosParaEmpresas() {
             <div className="w-16 h-16 bg-secondary-100 rounded-[2rem] flex items-center justify-center mb-8 text-secondary-600">
               <Activity className="w-8 h-8" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">Odonto Empresarial</h2>
+            <h2 className="text-4xl md:text-5xl font-display font-black text-neutral-900 mb-8 tracking-tight">{t('corp.dental.title')}</h2>
             <p className="text-lg text-neutral-600 font-medium mb-10 leading-relaxed">
-              Bem-estar completo para seu time com custo reduzido. Uma rede ampla e atendimento ágil para garantir o melhor sorriso da sua empresa.
+              {t('corp.dental.desc')}
             </p>
 
             <ul className="space-y-6 mb-12">
               {[
-                'Baixo impacto no budget e alto valor percebido',
-                'Rede nacional com especialistas em todas as áreas',
-                'Contratação rápida a partir de 2 vidas (MEI)'
+                t('corp.dental.f1'),
+                t('corp.dental.f2'),
+                t('corp.dental.f3')
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-4 text-neutral-700 font-bold">
                   <CheckCircle className="w-6 h-6 text-secondary-400 shrink-0" />
@@ -246,7 +248,7 @@ export default function SegurosParaEmpresas() {
             </ul>
 
             <button onClick={scrollToForm} className="text-neutral-900 font-black text-[0.7rem] tracking-[0.2em] uppercase flex items-center gap-2 group">
-              COTAR AGORA <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              {t('corp.dental.cta')} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -263,14 +265,13 @@ export default function SegurosParaEmpresas() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse"></span>
-              <p className="text-[0.6rem] font-black text-primary-400 tracking-[0.2em] uppercase">Consultoria Corporativa</p>
+              <p className="text-[0.6rem] font-black text-primary-400 tracking-[0.2em] uppercase">{t('corp.form.badge')}</p>
             </div>
             <h2 className="text-4xl md:text-5xl font-black tracking-tight leading-[1.1] mb-6">
-              Otimize seus benefícios e<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-brand-blue-400">proteja seu negócio.</span>
+              {t('corp.form.title').split(' ').map((word, i) => i > 3 ? <span key={i} className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-brand-blue-400">{word} </span> : <React.Fragment key={i}>{word} </React.Fragment>)}
             </h2>
             <p className="text-neutral-400 font-medium max-w-xl mx-auto">
-              Preencha os dados da sua empresa e receba um estudo técnico personalizado dos nossos especialistas.
+              {t('corp.form.desc')}
             </p>
           </div>
 
